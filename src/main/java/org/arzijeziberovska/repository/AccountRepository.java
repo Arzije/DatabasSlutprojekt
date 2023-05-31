@@ -4,56 +4,21 @@ import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Account;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.service.AccountService;
-import org.arzijeziberovska.view.AccountView;
 
-
-import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Scanner;
 
 public class AccountRepository extends DatabaseConnection{
 
     private User authenticatedUser;
     private AccountService accountService;
-    private Scanner scanner;
 
-    public AccountRepository(User authenticatedUser, AccountService accountService) {
-        this.authenticatedUser = authenticatedUser;
-        this.accountService = accountService;
+    public AccountRepository() {//User authenticatedUser, AccountService accountService) {
+//        this.authenticatedUser = authenticatedUser;
+//        this.accountService = accountService;
     }
 
-    public AccountRepository() {
-    }
-
-    public void getAccountsByUserSSN(User user) { //Stoppar in usern
-
-        try {
-            Connection connection = super.getConnection();
-
-            String query = "SELECT account_name, balance " +
-                    "FROM account AS a " +
-                    "JOIN user AS u ON a.SSN = u.SSN " +
-                    "WHERE u.SSN = ?";
-
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, user.getSSN()); //Hämtar userns SSN
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                String accountName = resultSet.getString("account_name");
-                BigDecimal balance = resultSet.getBigDecimal("balance");
-
-                System.out.println("Account name: " + accountName + " Balance: " + balance);
-            }
-
-            resultSet.close();
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-    }
+//    public AccountRepository() {
+//    }
 
     public void saveAccount(Account account) {
         try {
@@ -82,33 +47,23 @@ public class AccountRepository extends DatabaseConnection{
         }
     }
 
-    public void selectAccountByAccountNumber() {
+    public void deleteAccount(String accountNumber, String ssn) {
         try {
-            scanner = new Scanner(System.in);
-            System.out.println("Enter account number: ");
-            String accountNumber = scanner.nextLine();
-
             Connection connection = super.getConnection();
-
-            String query = "SELECT account_name, COUNT(*) FROM account WHERE account_number = ? AND SSN = ?";
-//            String subQuery = "IF EXISTS (SELECT * FROM account WHERE account_number = ? AND SSN = ?) THEN 1 ELSE 0 END IF";
+            String query = "DELETE FROM account WHERE account_number = ? AND SSN = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, accountNumber);
-            preparedStatement.setString(2, authenticatedUser.getSSN());
+            preparedStatement.setString(2, ssn);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            int result = preparedStatement.executeUpdate();
 
-            if (resultSet.next() && resultSet.getInt(2) > 0) {
-                String accountName = resultSet.getString("account_name");
-                System.out.println("Account name: " + accountName);
-
+            if (result > 0) {
+                System.out.println("Account deleted!");
             } else {
                 System.out.println("Account does not exist!");
             }
-            accountService.deleteAccount(accountNumber);
 
-            resultSet.close();
             preparedStatement.close();
             connection.close();
         } catch (SQLException e) {

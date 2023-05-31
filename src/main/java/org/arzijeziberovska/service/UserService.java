@@ -36,10 +36,7 @@ public class UserService extends DatabaseConnection {
     getAllUsers(): Hämtar alla användare i systemet.
      */
 
-    public void createUser() {
-        try {
-            Connection connection = super.getConnection();
-
+    public void createUser() throws SQLException, IOException {
             Scanner scanner = new Scanner(System.in);
 
             System.out.println("Enter your first and last name");
@@ -55,37 +52,15 @@ public class UserService extends DatabaseConnection {
             System.out.println("Enter a password");
             String password = scanner.nextLine();
 
-            String query = "INSERT IGNORE INTO user " +
-                    "(password, email, phonenumber, address, name, SSN) " +
-                    "VALUES (?, ?, ?, ?, ?, ?);"; // ta bort detta görs redan i saveUser metoden
-
-            // if () email exists, print choose another email adress
-
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, PasswordService.Hash(password));
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, phone);
-            preparedStatement.setString(4, address);
-            preparedStatement.setString(5, name);
-            preparedStatement.setString(6, SSN); // ta bort görs redan i saveUser metoden
-
-            System.out.println(" i create preparedStatement: " + preparedStatement);
-
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
-
-            User newUser = new User(password, email, phone, address, name, SSN);
-            System.out.println("i create newUser: " + newUser);
-            userRepository.saveUser(newUser);
-
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            System.out.println("Insert completed");
-        }
+            if (userRepository.getUserBySSN(SSN) != null) {
+                System.out.println("User with SSN " + SSN + " already exists");
+                System.out.println("");
+            } else {
+                User newUser = new User(PasswordService.Hash(password), email, phone, address, name, SSN);
+                System.out.println("i create newUser: " + newUser);
+                userRepository.saveUser(newUser);
+                System.out.println("Insert completed");
+            }
     }
 
 //    public void updateUserInfo(){
@@ -137,76 +112,53 @@ public class UserService extends DatabaseConnection {
 
 
     public void updateUserInfo() {
-        try {
-            Connection connection = super.getConnection();
-            Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-            System.out.println("Enter a new password (leave blank to keep the existing password)");
-            String newPassword = scanner.nextLine();
+        System.out.println("Enter a new password (leave blank to keep the existing)");
+        String newPassword = scanner.nextLine();
 
-            System.out.println("Enter an email of choice");
-            String email = scanner.nextLine();
+        System.out.println("Enter an email of choice (leave blank to keep the existing)");
+        String email = scanner.nextLine();
 
-            System.out.println("Enter your phone number");
-            String phone = scanner.nextLine();
+        System.out.println("Enter your phone number (leave blank to keep the existing)");
+        String phone = scanner.nextLine();
 
-            System.out.println("Enter your address");
-            String address = scanner.nextLine();
+        System.out.println("Enter your address (leave blank to keep the existing)");
+        String address = scanner.nextLine();
 
-            System.out.println("Enter your first and last name");
-            String name = scanner.nextLine();
+        System.out.println("Enter your first and last name (leave blank to keep the existing)");
+        String name = scanner.nextLine();
 
+        User updatedUser = new User(authenticatedUser.getPassword(), authenticatedUser.getEmail(),
+                authenticatedUser.getPhoneNumber(), authenticatedUser.getAddress(), authenticatedUser.getName(),
+                authenticatedUser.getSSN());
 
-            String query;
-            PreparedStatement preparedStatement;
-
-            if (!newPassword.isEmpty()) {
-                query = "UPDATE user SET password = ?, email = ?, phonenumber = ?, address = ?, name = ? WHERE SSN = ?";
-                preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setString(1, PasswordService.Hash(newPassword));
-                preparedStatement.setString(2, email);
-                preparedStatement.setString(3, phone);
-                preparedStatement.setString(4, address);
-                preparedStatement.setString(5, name);
-                preparedStatement.setString(6, authenticatedUser.getSSN());
-
-                System.out.println("newPassword: " + newPassword);
-                System.out.println("email: " + email);
-                System.out.println("phone: " + phone);
-                System.out.println("address: " + address);
-                System.out.println("name: " + name);
-                System.out.println("SSN: " + authenticatedUser.getSSN());
-
-            } else {
-                query = "UPDATE user SET email = ?, phonenumber = ?, address = ?, name = ? WHERE SSN = ?";
-                preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setString(1, email);
-                preparedStatement.setString(2, phone);
-                preparedStatement.setString(3, address);
-                preparedStatement.setString(4, name);
-                preparedStatement.setString(5, authenticatedUser.getSSN());
-            }
-
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
-
-            User updatedUser;
-            if (!newPassword.isEmpty()) {
-                updatedUser = new User(PasswordService.Hash(newPassword), email, phone, address, name, authenticatedUser.getSSN());
-            } else {
-                updatedUser = new User(authenticatedUser.getPassword(), email, phone, address, name, authenticatedUser.getSSN());
-            }
-            userRepository.updateUser(updatedUser);
-
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Update completed");
+        if (!newPassword.isEmpty()) {
+            String hashedPassword = PasswordService.Hash(newPassword);
+            updatedUser.setPassword(hashedPassword);
         }
+
+        if (!email.isEmpty()) {
+            updatedUser.setEmail(email);
+        }
+
+        if (!phone.isEmpty()) {
+            updatedUser.setPhoneNumber(phone);
+        }
+
+        if (!address.isEmpty()) {
+            updatedUser.setAddress(address);
+        }
+
+        if (!name.isEmpty()) {
+            updatedUser.setName(name);
+        }
+
+        userRepository.updateUser(updatedUser);
     }
 
-    public void deleteUserAndAccounts(){
+
+        public void deleteUserAndAccounts(){
         try {
             Connection connection = super.getConnection();
 

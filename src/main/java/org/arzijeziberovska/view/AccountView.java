@@ -48,9 +48,9 @@ public class AccountView {
                     whileTrue = false;
                     break;
                 case "2":
-                    TransactionService transactionService = new TransactionService(authenticatedUser);
-                    TransactionRepository transactionRepository = new TransactionRepository(authenticatedUser, transactionService);
-                    transactionRepository.getBalanceByAccountNumber();
+                    TransactionRepository transactionRepository = new TransactionRepository();
+                    TransactionService transactionService = new TransactionService(authenticatedUser, transactionRepository);
+                    transactionService.transferMoney();
 
                     break;
                 case "3":
@@ -61,19 +61,18 @@ public class AccountView {
                 case "4":
                     AccountRepository accountRepository3 = new AccountRepository();
                     AccountService accountService2 = new AccountService(authenticatedUser, accountRepository3);
-                    AccountRepository accountRepository4 = new AccountRepository(authenticatedUser, accountService2);
-                    accountRepository4.selectAccountByAccountNumber();
+                    accountService2.deleteAccount();
                     break;
                 case "5":
                     System.out.println("See sent transactions");
-                    TransactionService transactionService1 = new TransactionService(authenticatedUser);
-                    TransactionRepository transactionRepository1 = new TransactionRepository(authenticatedUser, transactionService1);
+                    TransactionRepository transactionRepository3 = new TransactionRepository();
+                    TransactionService transactionService1 = new TransactionService(authenticatedUser, transactionRepository3);
                     transactionService1.showSentTransactions();
                     break;
                 case "6":
                     System.out.println("See received transactions");
-                    TransactionService transactionService2 = new TransactionService(authenticatedUser);
-                    TransactionRepository transactionRepository2 = new TransactionRepository(authenticatedUser, transactionService2);
+                    TransactionRepository transactionRepository4 = new TransactionRepository();
+                    TransactionService transactionService2 = new TransactionService(authenticatedUser, transactionRepository4);
                     transactionService2.showReceivedTransactions();
                     break;
 

@@ -3,6 +3,7 @@ package org.arzijeziberovska.repository;
 
 
 import org.arzijeziberovska.database.DatabaseConnection;
+import org.arzijeziberovska.model.Transaction;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.service.TransactionService;
 
@@ -18,38 +19,152 @@ public class TransactionRepository extends DatabaseConnection {
     private User authenticatedUser;
     private TransactionService transactionService;
 
-    public TransactionRepository(User authenticatedUser, TransactionService transactionService) {
-        this.authenticatedUser = authenticatedUser;
-        this.transactionService = transactionService;
+
+
+//    public TransactionRepository(User authenticatedUser, TransactionService transactionService) {
+//        this.authenticatedUser = authenticatedUser;
+//        this.transactionService = transactionService;
+//    }
+
+    public TransactionRepository() {
+    }
+
+    public void transferMoney(int accountNumberFrom, int accountNumberTo, BigDecimal amount, String message, String ssn) {
+        try {
+            Connection connection = getConnection();
+
+            String query = "UPDATE account SET balance = balance - ? WHERE account_number = ? AND SSN = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setBigDecimal(1, amount);
+            preparedStatement.setInt(2, accountNumberFrom);
+            preparedStatement.setString(3, ssn);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("You don't have enough money in your account!");
+                preparedStatement.close();
+                connection.close();
+                return;
+            }
+
+            query = "UPDATE account SET balance = balance + ? WHERE account_number = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setBigDecimal(1, amount);
+            preparedStatement.setInt(2, accountNumberTo);
+
+            preparedStatement.executeUpdate();
+
+            System.out.println("Transfer successful!");
+
+            Transaction updatedTransaction = new Transaction(message, amount, accountNumberFrom, accountNumberTo, ssn);
+            saveTransaction(updatedTransaction);
+
+            preparedStatement.close();
+            connection.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
-    public BigDecimal getBalanceByAccountNumber() {
+    public void saveTransaction(Transaction updatedTransaction) {
         try {
             Connection connection = getConnection();
-            Scanner scanner = new Scanner(System.in);
 
-            System.out.print("Enter the account number: ");
-            String accountNumber = scanner.nextLine().trim();
+            String query = "INSERT INTO transaction (message, amount, from_account, to_account, SSN) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-            String query = "SELECT balance FROM account WHERE SSN = ? AND account_number = ?";
+            preparedStatement.setString(1, updatedTransaction.getMessage());
+            preparedStatement.setBigDecimal(2, updatedTransaction.getAmount());
+            preparedStatement.setInt(3, updatedTransaction.getFromAccount());
+            preparedStatement.setInt(4, updatedTransaction.getToAccount());
+            preparedStatement.setString(5, updatedTransaction.getSSN());
+
+            preparedStatement.executeUpdate();
+
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                updatedTransaction.setId(id);
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void sentTransactions(String accountNumberFrom, String fromDate, String toDate, String ssn) {
+        try {
+            Connection connection = getConnection();
+
+            String fromDateStart = fromDate + " 00:00:00";
+            String toDateEnd = toDate + " 23:59:59";
+
+            String query = "SELECT * FROM transaction WHERE from_account = ? AND SSN = ? AND created BETWEEN ? AND ?";
+
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            String ssn = authenticatedUser.getSSN();
-            preparedStatement.setString(1, ssn);
-            preparedStatement.setString(2, accountNumber);
+            preparedStatement.setString(1, accountNumberFrom);
+            preparedStatement.setString(2, ssn);
+            preparedStatement.setString(3, fromDateStart);
+            preparedStatement.setString(4, toDateEnd);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                BigDecimal balance = resultSet.getBigDecimal("balance");
-                System.out.println("Account balance: " + balance);
-                if (balance != null) {
-                    transactionService.transferMoney(balance);
-                }
-                System.out.println("Account balance: " + balance);
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("You have no sent transactions");
             } else {
-                System.out.println("Account not found!");
+                while (resultSet.next()) {
+                    System.out.println("Transaction ID: " + resultSet.getInt("id"));
+                    System.out.println("Message: " + resultSet.getString("message"));
+                    System.out.println("Amount: " + resultSet.getBigDecimal("amount"));
+                    System.out.println("To account: " + resultSet.getString("to_account"));
+                    System.out.println("Created: " + resultSet.getTimestamp("created"));
+                    System.out.println();
+                }
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void receivedTransactions(String accountNumberTo, String fromDate, String toDate) {
+        System.out.println(accountNumberTo + " " + fromDate + " " + toDate);
+        try {
+            Connection connection = getConnection();
+
+            String fromDateStart = fromDate + " 00:00:00";
+            String toDateEnd = toDate + " 23:59:59";
+
+            String query = "SELECT * FROM transaction WHERE to_account = ? AND created BETWEEN ? AND ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, accountNumberTo);
+//            preparedStatement.setString(2, ssn);
+            preparedStatement.setString(2, fromDateStart);
+            preparedStatement.setString(3, toDateEnd);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("You have no received transactions");
+            } else {
+                while (resultSet.next()) {
+                    System.out.println("Transaction ID: " + resultSet.getInt("id"));
+                    System.out.println("Message: " + resultSet.getString("message"));
+                    System.out.println("Amount: " + resultSet.getBigDecimal("amount"));
+                    System.out.println("From account: " + resultSet.getString("from_account"));
+                    System.out.println("Created: " + resultSet.getTimestamp("created"));
+                    System.out.println();
+                }
             }
 
             resultSet.close();
@@ -59,60 +174,6 @@ public class TransactionRepository extends DatabaseConnection {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
-        return null;
     }
-
-    public void getTranferLogg(){
-        // denna ska anropas varje gång, men ska ersätta den befintliga loggen för att kunna sortas
-        try {
-            Connection connection = getConnection();
-            Statement statement = connection.createStatement();
-
-            String query = "SELECT account_number FROM transactions ORDER BY created WHERE SSN = ? ";
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-//    public void transferMoney(){
-//        try {
-//            Connection connection = getConnection();
-//            Scanner scanner = new Scanner(System.in);
-//
-//            System.out.print("Enter the account number you want to transfer from: ");
-//            String accountNumberFrom = scanner.nextLine().trim();
-//
-//            System.out.print("Enter the account number you want to transfer to: ");
-//            String accountNumberTo = scanner.nextLine().trim();
-//
-//            System.out.print("Enter the amount you want to transfer: ");
-//            BigDecimal amount = scanner.nextBigDecimal();
-//
-//            String query = "UPDATE account SET balance = balance - ? WHERE account_number = ?";
-//            PreparedStatement preparedStatement = connection.prepareStatement(query);
-//            preparedStatement.setBigDecimal(1, amount);
-//            preparedStatement.setString(2, accountNumberFrom);
-//
-//            preparedStatement.executeUpdate();
-//
-//            query = "UPDATE account SET balance = balance + ? WHERE account_number = ?";
-//            preparedStatement = connection.prepareStatement(query);
-//            preparedStatement.setBigDecimal(1, amount);
-//            preparedStatement.setString(2, accountNumberTo);
-//
-//            preparedStatement.executeUpdate();
-//
-//            System.out.println("Transfer successful!");
-//
-//            preparedStatement.close();
-//            connection.close();
-//
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
 }
 

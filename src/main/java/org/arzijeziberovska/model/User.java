@@ -4,7 +4,7 @@ import org.arzijeziberovska.database.DatabaseConnection;
 
 public class User extends DatabaseConnection {
 
-    private int id;
+//    private int id;
     private String password;
     private String email;
     private String phoneNumber;
@@ -25,13 +25,13 @@ public class User extends DatabaseConnection {
         this.SSN = SSN;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     public String getPassword() {
         return password;

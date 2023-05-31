@@ -8,31 +8,13 @@ import java.sql.Statement;
 
 public class DatabaseHandler extends DatabaseConnection {
 
-    public DatabaseHandler() throws SQLException {
+    public DatabaseHandler() {
         createTableUser();
         createTableAccount();
         createTableTransaction();
     }
 
-    public void createDatabase() throws SQLException { // SEN
-        try {
-            Connection connection = super.getConnection();
-
-            String query = "CREATE DATABASE IF NOT EXISTS final_database;";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            int result = preparedStatement.executeUpdate(query);
-            System.out.println("Result: " + result);
-
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Database created successfully");
-        }
-    }
-
-    public void createTableUser() throws SQLException {
+    public void createTableUser() {
         try {
             Connection connection = super.getConnection();
             Statement statement = connection.createStatement();
@@ -51,7 +33,7 @@ public class DatabaseHandler extends DatabaseConnection {
         }
     }
 
-    public void createTableAccount() throws SQLException {
+    public void createTableAccount() {
         try {
             Connection connection = super.getConnection();
             Statement statement = connection.createStatement();
@@ -70,7 +52,7 @@ public class DatabaseHandler extends DatabaseConnection {
         }
     }
 
-    public void createTableTransaction() throws SQLException {
+    public void createTableTransaction() {
         try {
             Connection connection = super.getConnection();
             Statement statement = connection.createStatement();

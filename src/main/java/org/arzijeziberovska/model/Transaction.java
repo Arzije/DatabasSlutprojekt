@@ -14,15 +14,17 @@ public class Transaction extends DatabaseConnection {
     private BigDecimal amount;
     private int fromAccount;
     private int toAccount;
+    private String SSN;
 
-    public Transaction(int id, String message, Timestamp created, BigDecimal amount, int fromAccount, int toAccount) {
-        this.id = id;
+    public Transaction(String message, BigDecimal amount, int fromAccount, int toAccount, String SSN) {
+        //id
         this.message = message;
-        this.created = created;
         this.amount = amount;
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
+        this.SSN = SSN;
     }
+
 
     public int getId() {
         return id;
@@ -42,11 +44,11 @@ public class Transaction extends DatabaseConnection {
 
     public Timestamp getCreated() {
         return created;
-    }
+    } //ta bort ??
 
     public void setCreated(Timestamp created) {
         this.created = created;
-    }
+    } //ta bort ??
 
     public BigDecimal getAmount() {
         return amount;
@@ -71,5 +73,13 @@ public class Transaction extends DatabaseConnection {
     public void setToAccount(int toAccount) {
         this.toAccount = toAccount;
     }
+
+    public String getSSN() {
+        return SSN;
+    }
+    public void setSSN(String SSN) {
+        this.SSN = SSN;
+    }
 }
+
 

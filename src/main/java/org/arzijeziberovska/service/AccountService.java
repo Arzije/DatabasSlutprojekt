@@ -125,7 +125,6 @@ public class AccountService extends DatabaseConnection {
 
 
     public void createAccount(){
-        try {
             scanner = new Scanner(System.in);
             System.out.println("Enter account name: ");
             String accountName = scanner.nextLine();
@@ -145,57 +144,45 @@ public class AccountService extends DatabaseConnection {
 
             System.out.println("Account created!");
 
-            Connection connection = super.getConnection();
-            String query = "INSERT IGNORE INTO account " +
-                    "(balance, user_id, account_name, account_number, SSN) " +
-                    "VALUES (?, ?, ?, ?, ?)";
-
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            preparedStatement.setBigDecimal(1, balance);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.setString(3, accountName);
-            preparedStatement.setInt(4, accountNumber);
-            preparedStatement.setString(5, ssn);
-            preparedStatement.executeUpdate();
-
             Account newAccount = new Account(balance, userId, accountName, accountNumber, ssn);
             accountRepository.saveAccount(newAccount);
-
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error " + e.getMessage());
-
-        }
-
     }
 
-    public void deleteAccount(String accountNumber) {
-        try {
-            Connection connection = super.getConnection();
-            String query = "DELETE FROM account WHERE account_number = ? AND SSN = ?";
+//    public void deleteAccount(String accountNumber) {
+//        try {
+//            Connection connection = super.getConnection();
+//            String query = "DELETE FROM account WHERE account_number = ? AND SSN = ?";
+//
+//            PreparedStatement preparedStatement = connection.prepareStatement(query);
+//            preparedStatement.setString(1, accountNumber);
+//
+//            String ssn = authenticatedUser.getSSN();
+//            preparedStatement.setString(2, ssn);
+//
+//            preparedStatement.executeUpdate();
+////            accountRepository.removeSelectedAccount(accountNumber);
+//
+//            if(accountNumber == null) {
+//                System.out.println("Account does not exist!");
+//
+//            } else {
+//                System.out.println("Account deleted!");
+//            }
+//            connection.close();
+//            preparedStatement.close();
+//        } catch (SQLException e) {
+//            System.out.println("Error " + e.getMessage());
+//        }
+//    }
 
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, accountNumber);
+    public void deleteAccount() {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter account number: ");
+            String accountNumber = scanner.nextLine();
 
             String ssn = authenticatedUser.getSSN();
-            preparedStatement.setString(2, ssn);
-
-            preparedStatement.executeUpdate();
-//            accountRepository.removeSelectedAccount(accountNumber);
-
-            if(accountNumber == null) {
-                System.out.println("Account does not exist!");
-
-            } else {
-                System.out.println("Account deleted!");
-            }
-            connection.close();
-            preparedStatement.close();
-        } catch (SQLException e) {
-            System.out.println("Error " + e.getMessage());
-        }
-    }
+            accountRepository.deleteAccount(accountNumber, ssn);
+      }
 
 //    public void deleteAccountByAccountNumber() {
 //        try {

@@ -7,6 +7,7 @@ import org.arzijeziberovska.service.AccountService;
 import org.arzijeziberovska.service.AuthenticateUser;
 import org.arzijeziberovska.service.UserService;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -14,16 +15,16 @@ public class InitialView {
     private Scanner scanner;
     private User authenticatedUser;
 
-    public InitialView() throws SQLException {
+    public InitialView() throws SQLException, IOException {
         firstView();
     }
 
-    public InitialView(User authenticatedUser) throws SQLException {
+    public InitialView(User authenticatedUser) throws SQLException, IOException {
         this.authenticatedUser = authenticatedUser;
         firstView();
     }
 
-    public void firstView() throws SQLException {
+    public void firstView() throws SQLException, IOException {
 
         boolean whileTrue = true;
 
