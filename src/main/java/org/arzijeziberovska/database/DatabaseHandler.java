@@ -20,7 +20,13 @@ public class DatabaseHandler extends DatabaseConnection {
             Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS user " +
-                    "(id INT PRIMARY KEY AUTO_INCREMENT);";
+                    "(id INT PRIMARY KEY AUTO_INCREMENT, " +
+                    "password VARCHAR(96), " +
+                    "email VARCHAR(255), " +
+                    "phonenumber VARCHAR(15), " +
+                    "address VARCHAR(255), " +
+                    "name VARCHAR(255), " +
+                    "SSN VARCHAR(13));";
 
             int result = statement.executeUpdate(query);
             System.out.println("Result: " + result);
@@ -39,7 +45,13 @@ public class DatabaseHandler extends DatabaseConnection {
             Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS account " +
-                    "(id INT PRIMARY KEY AUTO_INCREMENT);";
+                    "(id INT PRIMARY KEY AUTO_INCREMENT, " +
+                    "balance DECIMAL(19,2), " +
+                    "created DATETIME, " +
+                    "user_id INT, " +
+                    "account_name VARCHAR(255), " +
+                    "account_number VARCHAR(9), " +
+                    "SSN VARCHAR(13));";
 
             int result = statement.executeUpdate(query);
             System.out.println("Result: " + result);
@@ -58,7 +70,13 @@ public class DatabaseHandler extends DatabaseConnection {
             Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS transaction " +
-                    "(id INT PRIMARY KEY AUTO_INCREMENT);";
+                    "(id INT PRIMARY KEY AUTO_INCREMENT, " +
+                    "message VARCHAR(255), " +
+                    "created DATETIME, " +
+                    "amount DECIMAL(19,2), " +
+                    "to_account INT, " +
+                    "from_account INT, " +
+                    "SSN VARCHAR(13));";
 
             int result = statement.executeUpdate(query);
             System.out.println("Result: " + result);
