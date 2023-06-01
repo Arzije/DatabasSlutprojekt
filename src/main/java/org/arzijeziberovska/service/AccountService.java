@@ -14,27 +14,23 @@ import java.util.Scanner;
 public class AccountService extends DatabaseConnection {
     private User authenticatedUser;
     private AccountRepository accountRepository;
-    private Scanner scanner;
 
     public AccountService(User authenticatedUser, AccountRepository accountRepository) {
         this.authenticatedUser = authenticatedUser;
         this.accountRepository = accountRepository;
     }
-    public AccountService() {
-    }
 
+    //säkerställer att det är rätt användare och en extra koll innan kontot raderas
     public void deleteAccount(String accountNumber, User authenticatedUser) {
         Scanner scanner = new Scanner(System.in);
         String ssn = authenticatedUser.getSSN();
 
-        // Validate Account Ownership
         Account account = accountRepository.getAccount(accountNumber);
         if (account == null || !account.getSSN().equals(ssn)) {
             System.out.println("Invalid account number or the account does not belong to you.");
             return;
         }
 
-        // Confirmation Prompt
         System.out.println("Are you sure you want to delete the account? (yes/no)");
         String confirmation = scanner.nextLine();
         if (!confirmation.equalsIgnoreCase("yes") && !confirmation.equalsIgnoreCase("delete")) {
@@ -42,7 +38,6 @@ public class AccountService extends DatabaseConnection {
             return;
         }
 
-        // Delete the Account
         accountRepository.deleteAccount(accountNumber, ssn);
     }
 

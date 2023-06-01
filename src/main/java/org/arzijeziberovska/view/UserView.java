@@ -13,12 +13,10 @@ import java.util.Scanner;
 
 public class UserView {
     private User authenticatedUser;
-
     private UserService userService;
-
     private Scanner scanner;
 
-    public UserView(User authenticatedUser, UserService userService) throws SQLException {
+    public UserView(User authenticatedUser, UserService userService) {
         this.authenticatedUser = authenticatedUser;
         if (authenticatedUser == null) {
             throw new IllegalArgumentException("User authentication failed. Please make sure the authentication process returns a valid User object.");

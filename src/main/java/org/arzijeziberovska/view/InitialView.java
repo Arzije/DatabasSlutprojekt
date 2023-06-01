@@ -20,7 +20,7 @@ public class InitialView {
         this.userRepository = userRepository;
 ;    }
 
-    public void firstView() throws SQLException {
+    public void firstView() {
         boolean whileTrue = true;
 
         while (whileTrue) {

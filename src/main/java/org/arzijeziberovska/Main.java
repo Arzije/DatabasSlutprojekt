@@ -21,10 +21,8 @@ public class Main {
         UserRepository userRepository = new UserRepository();
         UserService userService = new UserService(userRepository);
 
-        // Create an instance of the InitialView
-        InitialView initialView = new InitialView(userService, userRepository);
 
-        // Display the initial view
+        InitialView initialView = new InitialView(userService, userRepository );
         initialView.firstView();
 
 

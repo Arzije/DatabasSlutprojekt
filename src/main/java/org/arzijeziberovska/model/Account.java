@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 public class Account extends DatabaseConnection {
 
-//    private int id;
+    private int id;
     private BigDecimal balance;
     private Timestamp created;
     private int userId;
@@ -23,13 +23,13 @@ public class Account extends DatabaseConnection {
         this.SSN = SSN;
     }
 
-//    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public BigDecimal getBalance() {
         return balance;
