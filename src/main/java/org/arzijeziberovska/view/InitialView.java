@@ -3,8 +3,6 @@ package org.arzijeziberovska.view;
 
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.UserRepository;
-import org.arzijeziberovska.service.AccountService;
-import org.arzijeziberovska.service.AuthenticateUser;
 import org.arzijeziberovska.service.UserService;
 
 import java.io.IOException;
@@ -13,10 +11,17 @@ import java.util.Scanner;
 
 public class InitialView {
     private Scanner scanner;
+    private UserService userService;
     private User authenticatedUser;
 
-    public InitialView() throws SQLException, IOException {
-        firstView();
+    private UserRepository userRepository; //= new UserRepository();
+
+
+    public InitialView(UserService userService, UserRepository userRepository) throws SQLException, IOException {
+        this.userService = userService;
+//        this.authenticatedUser = authenticatedUser;
+        this.userRepository = userRepository;
+;
     }
 
 //    public InitialView(User authenticatedUser) throws SQLException, IOException {
@@ -25,33 +30,30 @@ public class InitialView {
 //    }
 
     public void firstView() throws SQLException, IOException {
-
         boolean whileTrue = true;
 
-        while (whileTrue){
+        while (whileTrue) {
             scanner = new Scanner(System.in);
 
             System.out.println("""
                     Welcome to Swosh!
-
+                    
                     Choose from the menu below:
                     1. Create user account.
-                    2. Login to existing account.
+                    2. Login to an existing account.
                     3. Quit.
                     """);
 
-            switch (scanner.nextLine().trim()){
+            switch (scanner.nextLine().trim()) {
                 case "1":
-                    UserRepository userRepository1 = new UserRepository();
-                    UserService userService = new UserService(authenticatedUser, userRepository1);
-                    userService.createUser();
+                    createUser();
                     break;
 
                 case "2":
-                    UserRepository userRepository4 = new UserRepository();
-                    UserService userService1 = new UserService(authenticatedUser, userRepository4);
-                    AuthenticateUser authenticateUser = new AuthenticateUser(userService1, userRepository4);
-                    UserView userView = new UserView(authenticateUser);
+//                    authenticatedUser = userService.authenticateUser();
+                    authenticatedUser = getAuthenticatedUser();
+                    UserService userService1 = new UserService(userRepository);
+                    UserView userView = new UserView(authenticatedUser, userService1);
                     userView.userView();
                     whileTrue = false;
                     break;
@@ -64,5 +66,65 @@ public class InitialView {
             }
         }
     }
+    private void createUser() throws SQLException, IOException {
+        System.out.println("Enter your first and last name");
+        String name = scanner.nextLine();
+        System.out.println("Enter your SSN");
+        String SSN = scanner.nextLine();
+        System.out.println("Enter an email of choice");
+        String email = scanner.nextLine();
+        System.out.println("Enter your address");
+        String address = scanner.nextLine();
+        System.out.println("Enter your phone number");
+        String phone = scanner.nextLine();
+        System.out.println("Enter a password");
+        String password = scanner.nextLine();
+
+        userService.createUser(name, SSN, email, address, phone, password);
+    }
+
+    public User getAuthenticatedUser() {
+        boolean authenticated = false;
+        User authenticatedUser = null;
+
+        while (!authenticated) {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("Enter your SSN:");
+            String ssn = scanner.nextLine();
+
+            System.out.println("Enter your password:");
+            String password = scanner.nextLine();
+
+            authenticatedUser = userService.authenticateUser(ssn, password);
+
+            if (authenticatedUser != null) {
+                authenticated = true;
+            }
+//            else {
+//                System.out.println("Wrong credentials! Please try again.");
+//            }
+        }
+
+        return authenticatedUser;
+    }
+
+//    public User getAuthenticatedUser() {
+//        boolean authenticated = false;
+//
+//        while (!authenticated) {
+//            Scanner scanner = new Scanner(System.in);
+//
+//            System.out.println("Enter your SSN:");
+//            String ssn = scanner.nextLine();
+//
+//            System.out.println("Enter your password:");
+//            String password = scanner.nextLine();
+//
+//            User user = userRepository.getUserBySSN(ssn);
+//            userService.authenticateUser(user, password);
+//    }
+//        return null;
+//    }
 }
 

@@ -32,17 +32,14 @@ public class AccountRepository extends DatabaseConnection{
             preparedStatement.setBigDecimal(1, account.getBalance());
             preparedStatement.setInt(2, account.getUserId());
             preparedStatement.setString(3, account.getAccountName());
-            preparedStatement.setInt(4, account.getAccountNumber());
+            preparedStatement.setString(4, account.getAccountNumber());
             preparedStatement.setString(5, account.getSSN());
 
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
+            preparedStatement.executeUpdate();
 
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Insert completed");
         }
     }
 

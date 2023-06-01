@@ -9,6 +9,12 @@ import java.sql.*;
 
 public class UserRepository extends DatabaseConnection {
 
+    private User authenticatedUser;
+
+    public UserRepository() {
+
+    }
+
     public void saveUser(User user) throws SQLException, IOException {
         try {
             Connection connection = super.getConnection();
@@ -26,14 +32,15 @@ public class UserRepository extends DatabaseConnection {
             preparedStatement.setString(5, user.getName());
             preparedStatement.setString(6, user.getSSN());
 
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
+            preparedStatement.executeUpdate();
 
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         } finally {
-            System.out.println("Insert completed");
+            System.out.println("""
+                    
+                    Insert completed""");
         }
     }
 
@@ -62,8 +69,9 @@ public class UserRepository extends DatabaseConnection {
                 preparedStatement.setString(5, user.getSSN());
             }
 
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
+            preparedStatement.executeUpdate();
+            System.out.println("""
+                    Your information has been updated""");
 
             connection.close();
         } catch (SQLException e) {
@@ -100,7 +108,7 @@ public class UserRepository extends DatabaseConnection {
         return null;
     }
 
-    public void deleteUser(User authenticatedUser) {
+    public void deleteUser(User authenticatedUser) { //används inte
         try {
             Connection connection = super.getConnection();
 
@@ -116,5 +124,32 @@ public class UserRepository extends DatabaseConnection {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
+    public void deleteUserAndAccounts(User authenticatedUser) {
+        try {
+            Connection connection = super.getConnection();
+
+            String deleteAccountQuery = "DELETE FROM account WHERE SSN = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteAccountQuery);
+            preparedStatement.setString(1, authenticatedUser.getSSN());
+
+            String deleteUserQuery = "DELETE FROM user WHERE SSN = ?";
+            PreparedStatement preparedStatement1 = connection.prepareStatement(deleteUserQuery);
+            preparedStatement1.setString(1, authenticatedUser.getSSN());
+
+            preparedStatement.executeUpdate();
+
+            preparedStatement1.executeUpdate();
+
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            System.out.println("""
+                    Deletion completed
+                    """);
+        }
+    }
+
 
 }

@@ -1,23 +1,28 @@
 package org.arzijeziberovska.view;
 
 import org.arzijeziberovska.model.User;
+import org.arzijeziberovska.repository.AccountRepository;
+import org.arzijeziberovska.repository.TransactionRepository;
 import org.arzijeziberovska.repository.UserRepository;
-import org.arzijeziberovska.service.AuthenticateUser;
+import org.arzijeziberovska.service.TransactionService;
 import org.arzijeziberovska.service.UserService;
 
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class UserView {
-    private AuthenticateUser authenticateUser;
     private User authenticatedUser;
+
+    private UserService userService;
+
     private Scanner scanner;
 
-    public UserView(AuthenticateUser authenticateUser) throws SQLException {
-        this.authenticatedUser = authenticateUser.authenticate();
+    public UserView(User authenticatedUser, UserService userService) throws SQLException {
+        this.authenticatedUser = authenticatedUser;
         if (authenticatedUser == null) {
             throw new IllegalArgumentException("User authentication failed. Please make sure the authentication process returns a valid User object.");
         }
+        this.userService = userService;
     }
 
     public void userView() throws SQLException {
@@ -30,31 +35,58 @@ public class UserView {
                     1. Accounts
                     2. Update user info
                     3. Delete user
-                    4. Quit         
+                    4. Log out        
                 """);
 
             switch (scanner.nextLine().trim()){
                 case "1":
-                    AccountView accountView = new AccountView(authenticatedUser);
+                    AccountRepository accountRepository = new AccountRepository();
+                    TransactionRepository transactionRepository1 = new TransactionRepository();
+                    TransactionService transactionService = new TransactionService(transactionRepository1);
+                    TransactionRepository transactionRepository = new TransactionRepository();
+                    AccountView accountView = new AccountView(authenticatedUser, accountRepository, transactionService, transactionRepository);
                     accountView.showAccountView();
                     whileTrue = false;
                     break;
                 case "2":
-                    UserRepository userRepository2 = new UserRepository();
-                    UserService userService = new UserService(authenticatedUser, userRepository2);
-                    userService.updateUserInfo();
+//                    UserRepository userRepository2 = new UserRepository();
+//                    UserService userService = new UserService(userRepository2);
+//                    userService.
+                            updateUserInfo();
                     break;
                 case "3":
                     UserRepository userRepository3 = new UserRepository();
-                    UserService userService2 = new UserService(authenticatedUser, userRepository3);
-                    userService2.deleteUserAndAccounts();
+                    userRepository3.deleteUserAndAccounts(authenticatedUser);
                     break;
                 case "4":
+                    System.out.println("You have been logged out!");
                     whileTrue = false;
                     break;
             }
         }
     }
+
+    public void updateUserInfo() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter a new password (leave blank to keep the existing)");
+        String newPassword = scanner.nextLine();
+
+        System.out.println("Enter an email of choice (leave blank to keep the existing)");
+        String email = scanner.nextLine();
+
+        System.out.println("Enter your phone number (leave blank to keep the existing)");
+        String phone = scanner.nextLine();
+
+        System.out.println("Enter your address (leave blank to keep the existing)");
+        String address = scanner.nextLine();
+
+        System.out.println("Enter your first and last name (leave blank to keep the existing)");
+        String name = scanner.nextLine();
+
+        userService.updateUserInfo(authenticatedUser, newPassword, email, phone, address, name);
+    }
+
 }
 
 

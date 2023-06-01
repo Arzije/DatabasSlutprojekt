@@ -12,10 +12,10 @@ public class Account extends DatabaseConnection {
     private Timestamp created;
     private int userId;
     private String accountName;
-    private int accountNumber;
+    private String accountNumber;
     private String SSN;
 
-    public Account(BigDecimal balance, int userId, String accountName, int accountNumber, String SSN) {
+    public Account(BigDecimal balance, int userId, String accountName, String accountNumber, String SSN) {
 //        this.id = id;
         this.balance = balance;
 //        this.created = created;
@@ -65,11 +65,11 @@ public class Account extends DatabaseConnection {
         this.accountName = accountName;
     }
 
-    public int getAccountNumber() {
-        return accountNumber;
+    public String getAccountNumber() {
+        return String.valueOf(accountNumber);
     }
 
-    public void setAccountNumber(int accountNumber) {
+    public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 

@@ -12,11 +12,11 @@ public class Transaction extends DatabaseConnection {
     private String message;
     private Timestamp created;
     private BigDecimal amount;
-    private int fromAccount;
-    private int toAccount;
+    private String fromAccount;
+    private String toAccount;
     private String SSN;
 
-    public Transaction(String message, BigDecimal amount, int fromAccount, int toAccount, String SSN) {
+    public Transaction(String message, BigDecimal amount, String fromAccount, String toAccount, String SSN) {
         //id
         this.message = message;
         this.amount = amount;
@@ -58,19 +58,19 @@ public class Transaction extends DatabaseConnection {
         this.amount = amount;
     }
 
-    public int getFromAccount() {
-        return fromAccount;
+    public String getFromAccount() {
+        return String.valueOf(fromAccount);
     }
 
-    public void setFromAccount(int fromAccount) {
+    public void setFromAccount(String fromAccount) {
         this.fromAccount = fromAccount;
     }
 
-    public int getToAccount() {
-        return toAccount;
+    public String getToAccount() {
+        return String.valueOf(toAccount);
     }
 
-    public void setToAccount(int toAccount) {
+    public void setToAccount(String toAccount) {
         this.toAccount = toAccount;
     }
 

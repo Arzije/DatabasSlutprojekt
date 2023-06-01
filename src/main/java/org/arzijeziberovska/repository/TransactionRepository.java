@@ -7,11 +7,7 @@ import org.arzijeziberovska.model.Transaction;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.service.TransactionService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Scanner;
+import java.sql.*;
 import java.math.BigDecimal;
 
 public class TransactionRepository extends DatabaseConnection {
@@ -29,46 +25,80 @@ public class TransactionRepository extends DatabaseConnection {
     public TransactionRepository() {
     }
 
-    public void transferMoney(int accountNumberFrom, int accountNumberTo, BigDecimal amount, String message, String ssn) {
+    public void transferMoney(String accountNumberFrom, String accountNumberTo, BigDecimal amount, String message, String ssn) {
         try {
             Connection connection = getConnection();
 
-            String query = "UPDATE account SET balance = balance - ? WHERE account_number = ? AND SSN = ?";
+            // kontrollerar om kontot finns hos den inloggade användaren
+            String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ? AND SSN = ?";
+            PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);
+            accountOwnershipCheckStatement.setString(1, accountNumberFrom);
+            accountOwnershipCheckStatement.setString(2, ssn);
 
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setBigDecimal(1, amount);
-            preparedStatement.setInt(2, accountNumberFrom);
-            preparedStatement.setString(3, ssn);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("You don't have enough money in your account!");
-                preparedStatement.close();
+            ResultSet accountOwnershipResult = accountOwnershipCheckStatement.executeQuery();
+            if (!accountOwnershipResult.next()) {
+                System.out.println("You don't have the specified account.");
+                accountOwnershipCheckStatement.close();
                 connection.close();
                 return;
             }
 
-            query = "UPDATE account SET balance = balance + ? WHERE account_number = ?";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setBigDecimal(1, amount);
-            preparedStatement.setInt(2, accountNumberTo);
+            // kontrollerar saldo
+            String balanceCheckQuery = "SELECT balance FROM account WHERE account_number = ? AND SSN = ?";
+            PreparedStatement balanceCheckStatement = connection.prepareStatement(balanceCheckQuery);
+            balanceCheckStatement.setString(1, accountNumberFrom);
+            balanceCheckStatement.setString(2, ssn);
 
-            preparedStatement.executeUpdate();
+            ResultSet balanceResult = balanceCheckStatement.executeQuery();
+            if (!balanceResult.next() || balanceResult.getBigDecimal("balance").compareTo(amount) < 0) {
+                System.out.println("You don't have enough money in your account!");
+                accountOwnershipCheckStatement.close();
+                balanceCheckStatement.close();
+                connection.close();
+                return;
+            }
+
+            // uppdaterar saldot på kontot som pengarna ska dras från
+            String updateFromQuery = "UPDATE account SET balance = balance - ? WHERE account_number = ? AND SSN = ?";
+            PreparedStatement updateFromStatement = connection.prepareStatement(updateFromQuery);
+            updateFromStatement.setBigDecimal(1, amount);
+            updateFromStatement.setString(2, accountNumberFrom);
+            updateFromStatement.setString(3, ssn);
+
+            int rowsAffected = updateFromStatement.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("Transfer failed: Account number or SSN is incorrect.");
+                accountOwnershipCheckStatement.close();
+                balanceCheckStatement.close();
+                updateFromStatement.close();
+                connection.close();
+                return;
+            }
+
+            // uppdatrar saldot på kontot som pengarna ska överföras till
+            String updateToQuery = "UPDATE account SET balance = balance + ? WHERE account_number = ?";
+            PreparedStatement updateToStatement = connection.prepareStatement(updateToQuery);
+            updateToStatement.setBigDecimal(1, amount);
+            updateToStatement.setString(2, accountNumberTo);
+
+            updateToStatement.executeUpdate();
 
             System.out.println("Transfer successful!");
 
             Transaction updatedTransaction = new Transaction(message, amount, accountNumberFrom, accountNumberTo, ssn);
             saveTransaction(updatedTransaction);
 
-            preparedStatement.close();
+            accountOwnershipCheckStatement.close();
+            balanceCheckStatement.close();
+            updateFromStatement.close();
+            updateToStatement.close();
             connection.close();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
-
-
+    // sparar gjorda transaktioner
     public void saveTransaction(Transaction updatedTransaction) {
         try {
             Connection connection = getConnection();
@@ -78,8 +108,8 @@ public class TransactionRepository extends DatabaseConnection {
 
             preparedStatement.setString(1, updatedTransaction.getMessage());
             preparedStatement.setBigDecimal(2, updatedTransaction.getAmount());
-            preparedStatement.setInt(3, updatedTransaction.getFromAccount());
-            preparedStatement.setInt(4, updatedTransaction.getToAccount());
+            preparedStatement.setString(3, updatedTransaction.getFromAccount());
+            preparedStatement.setString(4, updatedTransaction.getToAccount());
             preparedStatement.setString(5, updatedTransaction.getSSN());
 
             preparedStatement.executeUpdate();
@@ -98,9 +128,23 @@ public class TransactionRepository extends DatabaseConnection {
         }
     }
 
+    // hämtar skickade transaktioner
     public void sentTransactions(String accountNumberFrom, String fromDate, String toDate, String ssn) {
         try {
             Connection connection = getConnection();
+
+            String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ? AND SSN = ?";
+            PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);
+            accountOwnershipCheckStatement.setString(1, accountNumberFrom);
+            accountOwnershipCheckStatement.setString(2, ssn);
+
+            ResultSet accountOwnershipResult = accountOwnershipCheckStatement.executeQuery();
+            if (!accountOwnershipResult.next()) {
+                System.out.println("You don't have the specified account.");
+                accountOwnershipCheckStatement.close();
+                connection.close();
+                return;
+            }
 
             String fromDateStart = fromDate + " 00:00:00";
             String toDateEnd = toDate + " 23:59:59";
@@ -136,10 +180,22 @@ public class TransactionRepository extends DatabaseConnection {
         }
     }
 
+    // hämtar mottagna transaktioner
     public void receivedTransactions(String accountNumberTo, String fromDate, String toDate) {
-        System.out.println(accountNumberTo + " " + fromDate + " " + toDate);
         try {
             Connection connection = getConnection();
+
+            String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ?";
+            PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);
+            accountOwnershipCheckStatement.setString(1, accountNumberTo);
+
+            ResultSet accountOwnershipResult = accountOwnershipCheckStatement.executeQuery();
+            if (!accountOwnershipResult.next()) {
+                System.out.println("You don't have the specified account.");
+                accountOwnershipCheckStatement.close();
+                connection.close();
+                return;
+            }
 
             String fromDateStart = fromDate + " 00:00:00";
             String toDateEnd = toDate + " 23:59:59";
@@ -148,7 +204,6 @@ public class TransactionRepository extends DatabaseConnection {
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, accountNumberTo);
-//            preparedStatement.setString(2, ssn);
             preparedStatement.setString(2, fromDateStart);
             preparedStatement.setString(3, toDateEnd);
 
