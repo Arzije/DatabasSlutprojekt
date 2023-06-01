@@ -26,7 +26,6 @@ public class UserView {
         while (whileTrue){
             scanner = new Scanner(System.in);
             System.out.println("""
-                This is userView.
                 Choose from the menu below:
                     1. Accounts
                     2. Update user info

@@ -19,10 +19,10 @@ public class InitialView {
         firstView();
     }
 
-    public InitialView(User authenticatedUser) throws SQLException, IOException {
-        this.authenticatedUser = authenticatedUser;
-        firstView();
-    }
+//    public InitialView(User authenticatedUser) throws SQLException, IOException {
+//        this.authenticatedUser = authenticatedUser;
+//        firstView();
+//    }
 
     public void firstView() throws SQLException, IOException {
 
@@ -43,7 +43,6 @@ public class InitialView {
             switch (scanner.nextLine().trim()){
                 case "1":
                     UserRepository userRepository1 = new UserRepository();
-//                    UserService userService = new UserService(authenticatedUser, userRepository1);
                     UserService userService = new UserService(authenticatedUser, userRepository1);
                     userService.createUser();
                     break;
@@ -52,14 +51,8 @@ public class InitialView {
                     UserRepository userRepository4 = new UserRepository();
                     UserService userService1 = new UserService(authenticatedUser, userRepository4);
                     AuthenticateUser authenticateUser = new AuthenticateUser(userService1, userRepository4);
-                    AccountService accountService4 = new AccountService(); //
-//                    authenticateUser.authenticate();
-                    UserView userView = new UserView(authenticateUser);//, accountService
-//                    UserView userView = new UserView();
+                    UserView userView = new UserView(authenticateUser);
                     userView.userView();
-
-
-
                     whileTrue = false;
                     break;
 
@@ -69,7 +62,6 @@ public class InitialView {
                 default:
                     break;
             }
-
         }
     }
 }

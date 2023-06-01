@@ -14,9 +14,6 @@ public class Account extends DatabaseConnection {
     private String accountName;
     private int accountNumber;
     private String SSN;
-    public Account(){
-
-    }
 
     public Account(BigDecimal balance, int userId, String accountName, int accountNumber, String SSN) {
 //        this.id = id;

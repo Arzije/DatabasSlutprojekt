@@ -73,13 +73,8 @@ public class UserRepository extends DatabaseConnection {
 
 
     public User getUserBySSN(String ssn) {
-        System.out.println("i getUserBySSN ssn: " + ssn);
         try {
             Connection connection = getConnection();
-
-            System.out.println("");
-            System.out.println("Här körs getUserBySSN som finns i UserRepo");
-            System.out.println("");
 
             String query = "SELECT * FROM user WHERE SSN = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);

@@ -17,7 +17,6 @@ public class DatabaseHandler extends DatabaseConnection {
     public void createTableUser() {
         try {
             Connection connection = super.getConnection();
-            Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS user " +
                     "(id INT PRIMARY KEY AUTO_INCREMENT, " +
@@ -28,21 +27,18 @@ public class DatabaseHandler extends DatabaseConnection {
                     "name VARCHAR(255), " +
                     "SSN VARCHAR(13));";
 
-            int result = statement.executeUpdate(query);
-            System.out.println("Result: " + result);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
 
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Table created successfully");
         }
     }
 
     public void createTableAccount() {
         try {
             Connection connection = super.getConnection();
-            Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS account " +
                     "(id INT PRIMARY KEY AUTO_INCREMENT, " +
@@ -50,43 +46,40 @@ public class DatabaseHandler extends DatabaseConnection {
                     "created DATETIME, " +
                     "user_id INT, " +
                     "account_name VARCHAR(255), " +
-                    "account_number VARCHAR(9), " +
-                    "SSN VARCHAR(13));";
+                    "account_number VARCHAR(100), " +
+                    "SSN VARCHAR(13), " +
+                    "FOREIGN KEY (user_id) REFERENCES user(id));";
 
-            int result = statement.executeUpdate(query);
-            System.out.println("Result: " + result);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
 
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Table created successfully");
         }
     }
 
     public void createTableTransaction() {
         try {
             Connection connection = super.getConnection();
-            Statement statement = connection.createStatement();
 
             String query = "CREATE TABLE IF NOT EXISTS transaction " +
                     "(id INT PRIMARY KEY AUTO_INCREMENT, " +
                     "message VARCHAR(255), " +
                     "created DATETIME, " +
                     "amount DECIMAL(19,2), " +
-                    "to_account INT, " +
-                    "from_account INT, " +
+                    "to_account VARCHAR(100), " +
+                    "from_account VARCHAR(100), " +
                     "SSN VARCHAR(13));";
 
-            int result = statement.executeUpdate(query);
-            System.out.println("Result: " + result);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.executeUpdate();
 
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("Table created successfully");
         }
     }
+
 }
 

@@ -20,8 +20,6 @@ public abstract class DatabaseConnection {
     }
     public static void configureDataSource() {
         try {
-            System.out.printf("Configuring data source...");
-
             DatabaseConfig config = readConfigFromJson();
 
             dataSource = new MysqlDataSource();
@@ -31,9 +29,8 @@ public abstract class DatabaseConnection {
                     "?serverTimezone=UTC");
             dataSource.setUseSSL(false);
 
-            System.out.printf(" InitDb done!\n");
         } catch (SQLException | IOException e) {
-            System.out.printf("InitDb failed!\n");
+            System.out.printf("Initial Database!\n");
             System.exit(0);
         }
     }
@@ -43,13 +40,11 @@ public abstract class DatabaseConnection {
             configureDataSource();
         }
         try {
-            System.out.printf("Fetching connection to database...");
             Connection connection = dataSource.getConnection();
-            System.out.printf("Conn done!\n");
             return connection;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            System.out.printf("Conn failed!\n");
+            System.out.printf("Connection failed!\n");
             System.exit(0);
             return null;
         }
@@ -59,8 +54,6 @@ public abstract class DatabaseConnection {
         DatabaseConfig[] configs = objectMapper.readValue(jsonFile, DatabaseConfig[].class);
         return configs[0];
     }
-
-
 }
 
 

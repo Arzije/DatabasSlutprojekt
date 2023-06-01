@@ -6,6 +6,8 @@ import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.service.AccountService;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountRepository extends DatabaseConnection{
 
@@ -16,9 +18,6 @@ public class AccountRepository extends DatabaseConnection{
 //        this.authenticatedUser = authenticatedUser;
 //        this.accountService = accountService;
     }
-
-//    public AccountRepository() {
-//    }
 
     public void saveAccount(Account account) {
         try {
@@ -71,6 +70,31 @@ public class AccountRepository extends DatabaseConnection{
         }
     }
 
+    public List<String[]> getUserAccounts(String ssn) {
+        List<String[]> accounts = new ArrayList<>();
 
+        try (Connection connection = getConnection()) {
+            String query = "SELECT account_name, balance " +
+                    "FROM account " +
+                    "WHERE SSN = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, ssn);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String accountName = resultSet.getString("account_name");
+                double balance = resultSet.getDouble("balance");
+
+                String[] accountData = { accountName, String.valueOf(balance) };
+                accounts.add(accountData);
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return accounts;
+    }
 }
 

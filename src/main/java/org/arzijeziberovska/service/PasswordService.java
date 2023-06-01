@@ -1,34 +1,23 @@
 package org.arzijeziberovska.service;
 
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
-//Här hashas lösenordet när användaren skapar ett konto
-
-// Ta bort static
 
 public class PasswordService {
     private static final int SALT_LENGTH = 16;
 
     public static String Hash(String password){
-        // Generera ett salt
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH];
         random.nextBytes(salt);
 
         try {
-            // Skapa en instans av SHA-256 hash-funktionen
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            // Lägg till saltet till hash-funktionen
             digest.update(salt);
 
-            // Utför hashning av lösenordet
             byte[] hashedPassword = digest.digest(password.getBytes());
 
-            // Kombinera hashat lösenord och saltet till en sträng
             return byteArrayToHexString(hashedPassword) + byteArrayToHexString(salt);
         }catch(NoSuchAlgorithmException e){
             return null;
@@ -36,23 +25,17 @@ public class PasswordService {
     }
 
     public static boolean Verify(String password, String hashedPassword) {
-        // Dela upp hashat lösenord och saltet
         String passwordHash = hashedPassword.substring(0, 64);
         String saltHex = hashedPassword.substring(64);
 
         byte[] salt = hexStringToByteArray(saltHex);
 
         try {
-            // Skapa en instans av SHA-256 hash-funktionen
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            // Lägg till saltet till hash-funktionen
             digest.update(salt);
 
-            // Utför hashning av lösenordet
             byte[] hashedInputPassword = digest.digest(password.getBytes());
 
-            // Jämför de hashade lösenorden
             String hashedInputPasswordHex = byteArrayToHexString(hashedInputPassword);
             return passwordHash.equals(hashedInputPasswordHex);
         }

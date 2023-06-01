@@ -41,7 +41,6 @@ public class AccountView {
 
             switch (scanner.nextLine().trim()){
                 case "1":
-                    System.out.println("Accounts //LISTA");
                     AccountRepository accountRepository = new AccountRepository();
                     AccountService accountService3 = new AccountService(authenticatedUser, accountRepository);
                     accountService3.showUserAndAccounts();
@@ -64,13 +63,11 @@ public class AccountView {
                     accountService2.deleteAccount();
                     break;
                 case "5":
-                    System.out.println("See sent transactions");
                     TransactionRepository transactionRepository3 = new TransactionRepository();
                     TransactionService transactionService1 = new TransactionService(authenticatedUser, transactionRepository3);
                     transactionService1.showSentTransactions();
                     break;
                 case "6":
-                    System.out.println("See received transactions");
                     TransactionRepository transactionRepository4 = new TransactionRepository();
                     TransactionService transactionService2 = new TransactionService(authenticatedUser, transactionRepository4);
                     transactionService2.showReceivedTransactions();
