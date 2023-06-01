@@ -4,9 +4,6 @@ import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.UserRepository;
 
-import java.io.IOException;
-import java.util.Scanner;
-import java.sql.*;
 
 public class UserService extends DatabaseConnection {
     private UserRepository userRepository;
@@ -15,6 +12,7 @@ public class UserService extends DatabaseConnection {
         this.userRepository = userRepository;
     }
 
+    //validerar att användaren finns och att lösenordet stämmer
     public User authenticateUser(String ssn, String password) {
         User user = userRepository.getUserBySSN(ssn);
 
@@ -34,6 +32,7 @@ public class UserService extends DatabaseConnection {
         return PasswordService.Verify(password, hashedPassword);
     }
 
+    // kollar om användare med det SSN redan finns, om inte så skapas en ny användare
         public void createUser(String name, String SSN, String email, String address, String phone, String password) {
 
             if (userRepository.getUserBySSN(SSN) != null) {
@@ -49,10 +48,19 @@ public class UserService extends DatabaseConnection {
             }
         }
 
-    public void updateUserInfo(User authenticatedUser, String newPassword, String email, String phone, String address, String name) {
-        User updatedUser = new User(authenticatedUser.getPassword(), authenticatedUser.getEmail(),
-                authenticatedUser.getPhoneNumber(), authenticatedUser.getAddress(), authenticatedUser.getName(),
-                authenticatedUser.getSSN());
+        // ger användaren möjlighet att välja vilken info som ska uppdateras
+    public void updateUserInfo(User authenticatedUser,
+                               String newPassword,
+                               String email, String phone,
+                               String address,
+                               String name) {
+        User updatedUser =
+                new User(authenticatedUser.getPassword(),
+                        authenticatedUser.getEmail(),
+                        authenticatedUser.getPhoneNumber(),
+                        authenticatedUser.getAddress(),
+                        authenticatedUser.getName(),
+                        authenticatedUser.getSSN());
 
         if (!newPassword.isEmpty()) {
             String hashedPassword = PasswordService.Hash(newPassword);

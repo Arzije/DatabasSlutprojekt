@@ -25,7 +25,7 @@ public class UserView {
         this.userService = userService;
     }
 
-    public void userView() throws SQLException {
+    public void userView() {
         boolean whileTrue = true;
 
         while (whileTrue){
@@ -63,6 +63,7 @@ public class UserView {
         }
     }
 
+    //tar in input från användaren och skickar till userService för att uppdatera användarens info
     public void updateUserInfo() {
         Scanner scanner = new Scanner(System.in);
 

@@ -18,8 +18,7 @@ public class InitialView {
     public InitialView(UserService userService, UserRepository userRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
-;
-    }
+;    }
 
     public void firstView() throws SQLException {
         boolean whileTrue = true;
@@ -57,6 +56,8 @@ public class InitialView {
             }
         }
     }
+
+    //tar in input från användaren och skapar en ny användare
     private void createUser() {
         System.out.println("Enter your first and last name");
         String name = scanner.nextLine();
@@ -74,6 +75,7 @@ public class InitialView {
         userService.createUser(name, SSN, email, address, phone, password);
     }
 
+    //tar in input från användaren och autentiserar användaren
     public User getAuthenticatedUser() {
         boolean authenticated = false;
         User authenticatedUser = null;

@@ -13,6 +13,7 @@ public class TransactionService extends DatabaseConnection {
         this.transactionRepository = transactionRepository;
     }
 
+    //kontrollerar om användaren är inloggad och skickar sedan vidare till repository
     public void transferMoney(User authenticatedUser, String accountNumberFrom, String accountNumberTo, BigDecimal amount, String message) {
         if (authenticatedUser != null)  {
             String ssn = authenticatedUser.getSSN();
