@@ -1,21 +1,17 @@
 package org.arzijeziberovska.repository;
 
-
 import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.User;
 
-import java.io.IOException;
 import java.sql.*;
 
 public class UserRepository extends DatabaseConnection {
 
-    private User authenticatedUser;
-
     public UserRepository() {
-
     }
 
-    public void saveUser(User user) throws SQLException, IOException {
+    //sparar användare i databasen
+    public void saveUser(User user) {
         try {
             Connection connection = super.getConnection();
 
@@ -44,6 +40,7 @@ public class UserRepository extends DatabaseConnection {
         }
     }
 
+    //uppdaterar användarinfo
     public void updateUser(User user) {
         try {
             Connection connection = super.getConnection();
@@ -79,7 +76,7 @@ public class UserRepository extends DatabaseConnection {
         }
     }
 
-
+    //hämtar användare från databasen baserat på SSN
     public User getUserBySSN(String ssn) {
         try {
             Connection connection = getConnection();
@@ -108,23 +105,7 @@ public class UserRepository extends DatabaseConnection {
         return null;
     }
 
-    public void deleteUser(User authenticatedUser) { //används inte
-        try {
-            Connection connection = super.getConnection();
-
-            String query = "DELETE FROM user WHERE SSN = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, authenticatedUser.getSSN());
-
-            int result = preparedStatement.executeUpdate();
-            System.out.println("Result: " + result);
-
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
+    //tar bort användare och alla konton som tillhör användaren
     public void deleteUserAndAccounts(User authenticatedUser) {
         try {
             Connection connection = super.getConnection();
@@ -138,7 +119,6 @@ public class UserRepository extends DatabaseConnection {
             preparedStatement1.setString(1, authenticatedUser.getSSN());
 
             preparedStatement.executeUpdate();
-
             preparedStatement1.executeUpdate();
 
             connection.close();
@@ -150,6 +130,4 @@ public class UserRepository extends DatabaseConnection {
                     """);
         }
     }
-
-
 }

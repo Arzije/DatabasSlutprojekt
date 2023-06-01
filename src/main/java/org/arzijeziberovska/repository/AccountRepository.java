@@ -2,22 +2,12 @@ package org.arzijeziberovska.repository;
 
 import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Account;
-import org.arzijeziberovska.model.User;
-import org.arzijeziberovska.service.AccountService;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountRepository extends DatabaseConnection{
-
-    private User authenticatedUser;
-    private AccountService accountService;
-
-    public AccountRepository() {//User authenticatedUser, AccountService accountService) {
-//        this.authenticatedUser = authenticatedUser;
-//        this.accountService = accountService;
-    }
 
     public void saveAccount(Account account) {
         try {
@@ -43,6 +33,7 @@ public class AccountRepository extends DatabaseConnection{
         }
     }
 
+    //raderar konto baserat på kontonummer och SSN
     public void deleteAccount(String accountNumber, String ssn) {
         try {
             Connection connection = super.getConnection();
@@ -67,6 +58,7 @@ public class AccountRepository extends DatabaseConnection{
         }
     }
 
+    //hämtar lista på konton baserat på SSN
     public List<String[]> getUserAccounts(String ssn) {
         List<String[]> accounts = new ArrayList<>();
 

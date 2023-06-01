@@ -13,23 +13,15 @@ public class InitialView {
     private Scanner scanner;
     private UserService userService;
     private User authenticatedUser;
+    private UserRepository userRepository;
 
-    private UserRepository userRepository; //= new UserRepository();
-
-
-    public InitialView(UserService userService, UserRepository userRepository) throws SQLException, IOException {
+    public InitialView(UserService userService, UserRepository userRepository) {
         this.userService = userService;
-//        this.authenticatedUser = authenticatedUser;
         this.userRepository = userRepository;
 ;
     }
 
-//    public InitialView(User authenticatedUser) throws SQLException, IOException {
-//        this.authenticatedUser = authenticatedUser;
-//        firstView();
-//    }
-
-    public void firstView() throws SQLException, IOException {
+    public void firstView() throws SQLException {
         boolean whileTrue = true;
 
         while (whileTrue) {
@@ -50,7 +42,6 @@ public class InitialView {
                     break;
 
                 case "2":
-//                    authenticatedUser = userService.authenticateUser();
                     authenticatedUser = getAuthenticatedUser();
                     UserService userService1 = new UserService(userRepository);
                     UserView userView = new UserView(authenticatedUser, userService1);
@@ -66,7 +57,7 @@ public class InitialView {
             }
         }
     }
-    private void createUser() throws SQLException, IOException {
+    private void createUser() {
         System.out.println("Enter your first and last name");
         String name = scanner.nextLine();
         System.out.println("Enter your SSN");
@@ -101,30 +92,8 @@ public class InitialView {
             if (authenticatedUser != null) {
                 authenticated = true;
             }
-//            else {
-//                System.out.println("Wrong credentials! Please try again.");
-//            }
         }
-
         return authenticatedUser;
     }
-
-//    public User getAuthenticatedUser() {
-//        boolean authenticated = false;
-//
-//        while (!authenticated) {
-//            Scanner scanner = new Scanner(System.in);
-//
-//            System.out.println("Enter your SSN:");
-//            String ssn = scanner.nextLine();
-//
-//            System.out.println("Enter your password:");
-//            String password = scanner.nextLine();
-//
-//            User user = userRepository.getUserBySSN(ssn);
-//            userService.authenticateUser(user, password);
-//    }
-//        return null;
-//    }
 }
 

@@ -51,51 +51,29 @@ public class AccountView extends DatabaseConnection {
 
             switch (scanner.nextLine().trim()){
                 case "1":
-//                    AccountRepository accountRepository = new AccountRepository();
-//                    AccountService accountService3 = new AccountService(authenticatedUser, accountRepository);
-//                    accountService3.
-                            showUserAndAccounts();
-                    whileTrue = false;
+                    showUserAndAccounts();
                     break;
                 case "2":
-//                    TransactionRepository transactionRepository = new TransactionRepository();
-//                    TransactionService transactionService = new TransactionService(authenticatedUser, transactionRepository);
-//                    transactionService.
-                            transferMoney();
-
+                    transferMoney();
                     break;
                 case "3":
-//                    AccountRepository accountRepository2 = new AccountRepository();
-//                    AccountService accountService1 = new AccountService(authenticatedUser, accountRepository2);
-//                    accountService1.
-                            createAccount();
+                    createAccount();
                     break;
                 case "4":
-//                    AccountRepository accountRepository3 = new AccountRepository();
-//                    AccountService accountService2 = new AccountService(authenticatedUser, accountRepository3);
-//                    accountService2.
-                            deleteAccount();
+                    deleteAccount();
                     break;
                 case "5":
-//                    TransactionRepository transactionRepository3 = new TransactionRepository();
-//                    TransactionService transactionService1 = new TransactionService(authenticatedUser, transactionRepository3);
-//                    transactionService1.
-                            showSentTransactions();
+                    showSentTransactions();
                     break;
                 case "6":
-//                    TransactionRepository transactionRepository4 = new TransactionRepository();
-//                    TransactionService transactionService2 = new TransactionService(authenticatedUser, transactionRepository4);
-//                    transactionService2.
-                            showReceivedTransactions();
+                    showReceivedTransactions();
                     break;
                 case "7":
                     System.out.println("You have been logged out!");
                     whileTrue = false;
                     break;
-
             }
         }
-
     }
 
     public void showUserAndAccounts() {
@@ -236,7 +214,5 @@ public class AccountView extends DatabaseConnection {
             System.out.println(e.getMessage());
         }
     }
-
-
 }
 

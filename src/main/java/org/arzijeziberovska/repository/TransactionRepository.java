@@ -1,7 +1,5 @@
 package org.arzijeziberovska.repository;
 
-
-
 import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Transaction;
 import org.arzijeziberovska.model.User;
@@ -11,16 +9,6 @@ import java.sql.*;
 import java.math.BigDecimal;
 
 public class TransactionRepository extends DatabaseConnection {
-
-    private User authenticatedUser;
-    private TransactionService transactionService;
-
-
-
-//    public TransactionRepository(User authenticatedUser, TransactionService transactionService) {
-//        this.authenticatedUser = authenticatedUser;
-//        this.transactionService = transactionService;
-//    }
 
     public TransactionRepository() {
     }
@@ -98,6 +86,7 @@ public class TransactionRepository extends DatabaseConnection {
             System.out.println("Error: " + e.getMessage());
         }
     }
+
     // sparar gjorda transaktioner
     public void saveTransaction(Transaction updatedTransaction) {
         try {

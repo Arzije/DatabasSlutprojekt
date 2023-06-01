@@ -49,10 +49,7 @@ public class UserView {
                     whileTrue = false;
                     break;
                 case "2":
-//                    UserRepository userRepository2 = new UserRepository();
-//                    UserService userService = new UserService(userRepository2);
-//                    userService.
-                            updateUserInfo();
+                    updateUserInfo();
                     break;
                 case "3":
                     UserRepository userRepository3 = new UserRepository();
