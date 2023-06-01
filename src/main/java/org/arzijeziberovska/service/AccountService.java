@@ -23,5 +23,28 @@ public class AccountService extends DatabaseConnection {
     public AccountService() {
     }
 
+    public void deleteAccount(String accountNumber, User authenticatedUser) {
+        Scanner scanner = new Scanner(System.in);
+        String ssn = authenticatedUser.getSSN();
+
+        // Validate Account Ownership
+        Account account = accountRepository.getAccount(accountNumber);
+        if (account == null || !account.getSSN().equals(ssn)) {
+            System.out.println("Invalid account number or the account does not belong to you.");
+            return;
+        }
+
+        // Confirmation Prompt
+        System.out.println("Are you sure you want to delete the account? (yes/no)");
+        String confirmation = scanner.nextLine();
+        if (!confirmation.equalsIgnoreCase("yes") && !confirmation.equalsIgnoreCase("delete")) {
+            System.out.println("Account deletion cancelled.");
+            return;
+        }
+
+        // Delete the Account
+        accountRepository.deleteAccount(accountNumber, ssn);
+    }
+
 }
 

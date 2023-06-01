@@ -4,6 +4,7 @@ import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.AccountRepository;
 import org.arzijeziberovska.repository.TransactionRepository;
 import org.arzijeziberovska.repository.UserRepository;
+import org.arzijeziberovska.service.AccountService;
 import org.arzijeziberovska.service.TransactionService;
 import org.arzijeziberovska.service.UserService;
 
@@ -44,7 +45,8 @@ public class UserView {
                     TransactionRepository transactionRepository1 = new TransactionRepository();
                     TransactionService transactionService = new TransactionService(transactionRepository1);
                     TransactionRepository transactionRepository = new TransactionRepository();
-                    AccountView accountView = new AccountView(authenticatedUser, accountRepository, transactionService, transactionRepository);
+                    AccountService accountService = new AccountService(authenticatedUser, accountRepository);
+                    AccountView accountView = new AccountView(authenticatedUser, accountRepository, transactionService, transactionRepository, accountService);
                     accountView.showAccountView();
                     whileTrue = false;
                     break;

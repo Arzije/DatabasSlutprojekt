@@ -35,11 +35,9 @@ public class UserService extends DatabaseConnection {
     // kollar om användare med det SSN redan finns, om inte så skapas en ny användare
         public void createUser(String name, String SSN, String email, String address, String phone, String password) {
 
-            if (userRepository.getUserBySSN(SSN) != null) {
-                System.out.println("""
-                        User with SSN " + SSN + " already exists
-                        
-                        """);
+            if (userRepository.getUserBySSN(SSN) != null || userRepository.getUserByEmail(email) != null) {
+                System.out.println("User with SSN " + SSN + " or with email " + email + " already exists");
+                System.out.println();
 
             } else {
                 User newUser = new User(PasswordService.Hash(password), email, phone, address, name, SSN);

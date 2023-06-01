@@ -3,6 +3,7 @@ package org.arzijeziberovska.repository;
 import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Account;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class AccountRepository extends DatabaseConnection{
         try {
             Connection connection = super.getConnection();
 
-            String query = "INSERT IGNORE INTO account " +
+            String query = "INSERT INTO account " +
                     "(balance, user_id, account_name, account_number, SSN) " +
                     "VALUES (?, ?, ?, ?, ?);";
 
@@ -27,6 +28,7 @@ public class AccountRepository extends DatabaseConnection{
 
             preparedStatement.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -46,9 +48,11 @@ public class AccountRepository extends DatabaseConnection{
             int result = preparedStatement.executeUpdate();
 
             if (result > 0) {
-                System.out.println("Account deleted!");
+                System.out.println("""
+                        Account deleted!""");
             } else {
-                System.out.println("Account does not exist!");
+                System.out.println("""
+                        Account does not exist!""");
             }
 
             preparedStatement.close();
@@ -62,7 +66,9 @@ public class AccountRepository extends DatabaseConnection{
     public List<String[]> getUserAccounts(String ssn) {
         List<String[]> accounts = new ArrayList<>();
 
-        try (Connection connection = getConnection()) {
+        try {
+            Connection connection = getConnection();
+
             String query = "SELECT account_name, balance " +
                     "FROM account " +
                     "WHERE SSN = ?";
@@ -80,10 +86,43 @@ public class AccountRepository extends DatabaseConnection{
             }
 
             resultSet.close();
+            preparedStatement.close();
+            connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
         return accounts;
+    }
+
+    public Account getAccount(String accountNumber) {
+        try {
+            Connection connection = getConnection();
+
+            String query = "SELECT * FROM account WHERE account_number = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, accountNumber);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String accountName = resultSet.getString("account_name");
+                String accountNumberFromDB = resultSet.getString("account_number");
+                BigDecimal balance = resultSet.getBigDecimal("balance");
+                int userId = resultSet.getInt("user_id");
+                String SSN = resultSet.getString("SSN");
+
+                Account account = new Account(balance, userId, accountName, accountNumberFromDB, SSN);
+
+                resultSet.close();
+                preparedStatement.close();
+                connection.close();
+
+                return account;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
     }
 }
 

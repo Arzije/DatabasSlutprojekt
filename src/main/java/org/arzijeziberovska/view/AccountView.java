@@ -6,6 +6,7 @@ import org.arzijeziberovska.model.Account;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.AccountRepository;
 import org.arzijeziberovska.repository.TransactionRepository;
+import org.arzijeziberovska.service.AccountService;
 import org.arzijeziberovska.service.TransactionService;
 
 import java.math.BigDecimal;
@@ -18,13 +19,19 @@ public class AccountView extends DatabaseConnection {
     private AccountRepository accountRepository;
     private TransactionRepository transactionRepository;
     private TransactionService transactionService;
+    private AccountService accountService;
     private Scanner scanner;
 
-    public AccountView(User authenticatedUser, AccountRepository accountRepository, TransactionService transactionService, TransactionRepository transactionRepository ) {
+    public AccountView(User authenticatedUser,
+                       AccountRepository accountRepository,
+                       TransactionService transactionService,
+                       TransactionRepository transactionRepository,
+                        AccountService accountService) {
         this.authenticatedUser = authenticatedUser;
         this.accountRepository = accountRepository;
         this.transactionService = transactionService;
         this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
     }
     public void showAccountView() {
 
@@ -142,7 +149,7 @@ public class AccountView extends DatabaseConnection {
         String accountNumber = scanner.nextLine();
 
         String ssn = authenticatedUser.getSSN();
-        accountRepository.deleteAccount(accountNumber, ssn);
+        accountService.deleteAccount(accountNumber, authenticatedUser);
     }
 
     // tar in input från användaren och skickar vidare till service för att göra en transaktion

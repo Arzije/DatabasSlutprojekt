@@ -30,6 +30,7 @@ public class UserRepository extends DatabaseConnection {
 
             preparedStatement.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -70,6 +71,7 @@ public class UserRepository extends DatabaseConnection {
             System.out.println("""
                     Your information has been updated""");
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -97,6 +99,7 @@ public class UserRepository extends DatabaseConnection {
                 return new User(password, email, phoneNumber, address, name, ssn);
             }
 
+            preparedStatement.close();
             resultSet.close();
             connection.close();
         } catch (SQLException e) {
@@ -121,6 +124,7 @@ public class UserRepository extends DatabaseConnection {
             preparedStatement.executeUpdate();
             preparedStatement1.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -129,5 +133,34 @@ public class UserRepository extends DatabaseConnection {
                     Deletion completed
                     """);
         }
+    }
+
+    public Object getUserByEmail(String email) {
+        try {
+            Connection connection = getConnection();
+
+            String query = "SELECT * FROM user WHERE email = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, email);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String password = resultSet.getString("password");
+                String phoneNumber = resultSet.getString("phonenumber");
+                String address = resultSet.getString("address");
+                String ssn = resultSet.getString("SSN");
+
+                return new User(password, email, phoneNumber, address, name, ssn);
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
     }
 }

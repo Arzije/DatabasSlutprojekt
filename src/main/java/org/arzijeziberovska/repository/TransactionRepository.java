@@ -19,6 +19,7 @@ public class TransactionRepository extends DatabaseConnection {
 
             // kontrollerar om kontot finns hos den inloggade användaren
             String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ? AND SSN = ?";
+
             PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);
             accountOwnershipCheckStatement.setString(1, accountNumberFrom);
             accountOwnershipCheckStatement.setString(2, ssn);
@@ -26,6 +27,7 @@ public class TransactionRepository extends DatabaseConnection {
             ResultSet accountOwnershipResult = accountOwnershipCheckStatement.executeQuery();
             if (!accountOwnershipResult.next()) {
                 System.out.println("You don't have the specified account.");
+
                 accountOwnershipCheckStatement.close();
                 connection.close();
                 return;
@@ -33,6 +35,7 @@ public class TransactionRepository extends DatabaseConnection {
 
             // kontrollerar saldo
             String balanceCheckQuery = "SELECT balance FROM account WHERE account_number = ? AND SSN = ?";
+
             PreparedStatement balanceCheckStatement = connection.prepareStatement(balanceCheckQuery);
             balanceCheckStatement.setString(1, accountNumberFrom);
             balanceCheckStatement.setString(2, ssn);
@@ -40,6 +43,7 @@ public class TransactionRepository extends DatabaseConnection {
             ResultSet balanceResult = balanceCheckStatement.executeQuery();
             if (!balanceResult.next() || balanceResult.getBigDecimal("balance").compareTo(amount) < 0) {
                 System.out.println("You don't have enough money in your account!");
+
                 accountOwnershipCheckStatement.close();
                 balanceCheckStatement.close();
                 connection.close();
@@ -48,6 +52,7 @@ public class TransactionRepository extends DatabaseConnection {
 
             // uppdaterar saldot på kontot som pengarna ska dras från
             String updateFromQuery = "UPDATE account SET balance = balance - ? WHERE account_number = ? AND SSN = ?";
+
             PreparedStatement updateFromStatement = connection.prepareStatement(updateFromQuery);
             updateFromStatement.setBigDecimal(1, amount);
             updateFromStatement.setString(2, accountNumberFrom);
@@ -56,6 +61,7 @@ public class TransactionRepository extends DatabaseConnection {
             int rowsAffected = updateFromStatement.executeUpdate();
             if (rowsAffected == 0) {
                 System.out.println("Transfer failed: Account number or SSN is incorrect.");
+
                 accountOwnershipCheckStatement.close();
                 balanceCheckStatement.close();
                 updateFromStatement.close();
@@ -65,6 +71,7 @@ public class TransactionRepository extends DatabaseConnection {
 
             // uppdatrar saldot på kontot som pengarna ska överföras till
             String updateToQuery = "UPDATE account SET balance = balance + ? WHERE account_number = ?";
+
             PreparedStatement updateToStatement = connection.prepareStatement(updateToQuery);
             updateToStatement.setBigDecimal(1, amount);
             updateToStatement.setString(2, accountNumberTo);
@@ -138,7 +145,9 @@ public class TransactionRepository extends DatabaseConnection {
             String fromDateStart = fromDate + " 00:00:00";
             String toDateEnd = toDate + " 23:59:59";
 
-            String query = "SELECT * FROM transaction WHERE from_account = ? AND SSN = ? AND created BETWEEN ? AND ?";
+            String query = "SELECT * FROM transaction WHERE from_account = ? AND SSN = ? " +
+                    "AND created BETWEEN ? AND ? ORDER BY created ASC ";
+
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, accountNumberFrom);
@@ -189,7 +198,8 @@ public class TransactionRepository extends DatabaseConnection {
             String fromDateStart = fromDate + " 00:00:00";
             String toDateEnd = toDate + " 23:59:59";
 
-            String query = "SELECT * FROM transaction WHERE to_account = ? AND created BETWEEN ? AND ?";
+            String query = "SELECT * FROM transaction WHERE to_account = ? AND created BETWEEN ? AND ? " +
+                    "ORDER BY created ASC ";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, accountNumberTo);

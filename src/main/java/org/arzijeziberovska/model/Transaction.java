@@ -17,7 +17,6 @@ public class Transaction extends DatabaseConnection {
     private String SSN;
 
     public Transaction(String message, BigDecimal amount, String fromAccount, String toAccount, String SSN) {
-        //id
         this.message = message;
         this.amount = amount;
         this.fromAccount = fromAccount;

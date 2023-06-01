@@ -1,10 +1,8 @@
 package org.arzijeziberovska.database;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseHandler extends DatabaseConnection {
 
@@ -30,6 +28,7 @@ public class DatabaseHandler extends DatabaseConnection {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -53,6 +52,7 @@ public class DatabaseHandler extends DatabaseConnection {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -75,6 +75,7 @@ public class DatabaseHandler extends DatabaseConnection {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.executeUpdate();
 
+            preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
