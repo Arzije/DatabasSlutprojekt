@@ -1,7 +1,6 @@
 package org.arzijeziberovska.view;
 
 import org.arzijeziberovska.model.User;
-import org.arzijeziberovska.repository.UserRepository;
 import org.arzijeziberovska.service.UserService;
 import org.arzijeziberovska.service.AccountService;
 import org.arzijeziberovska.service.TransactionService;
@@ -12,19 +11,16 @@ import java.util.Scanner;
 
     public class InitialView {
         private Scanner scanner;
-        private UserService userService;
-        private User authenticatedUser;
-        private UserRepository userRepository;
-        private AccountRepository accountRepository;
-        private TransactionService transactionService;
-        private TransactionRepository transactionRepository;
-        private AccountService accountService;
+        private final UserService userService;
+        private final AccountRepository accountRepository;
+        private final TransactionService transactionService;
+        private final TransactionRepository transactionRepository;
+        private final AccountService accountService;
 
-        public InitialView(UserService userService, UserRepository userRepository,
+        public InitialView(UserService userService,
                            AccountRepository accountRepository, TransactionService transactionService,
                            TransactionRepository transactionRepository, AccountService accountService) {
             this.userService = userService;
-            this.userRepository = userRepository;
             this.accountRepository = accountRepository;
             this.transactionService = transactionService;
             this.transactionRepository = transactionRepository;
@@ -52,7 +48,7 @@ import java.util.Scanner;
                     break;
 
                 case "2":
-                    authenticatedUser = getAuthenticatedUser();
+                    User authenticatedUser = getAuthenticatedUser();
                     UserView userView = new UserView
                             (authenticatedUser, userService, accountRepository,
                             transactionService, transactionRepository, accountService);
@@ -67,6 +63,7 @@ import java.util.Scanner;
                     break;
             }
         }
+        scanner.close();
     }
 
     //tar in input från användaren och skapar en ny användare
@@ -85,6 +82,7 @@ import java.util.Scanner;
         String password = scanner.nextLine();
 
         userService.createUser(name, SSN, email, address, phone, password);
+        scanner.close();
     }
 
     //tar in input från användaren och autentiserar användaren
@@ -106,6 +104,7 @@ import java.util.Scanner;
             if (authenticatedUser != null) {
                 authenticated = true;
             }
+            scanner.close();
         }
         return authenticatedUser;
     }

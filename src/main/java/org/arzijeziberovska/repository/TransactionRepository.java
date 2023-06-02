@@ -2,8 +2,6 @@ package org.arzijeziberovska.repository;
 
 import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Transaction;
-import org.arzijeziberovska.model.User;
-import org.arzijeziberovska.service.TransactionService;
 
 import java.sql.*;
 import java.math.BigDecimal;
@@ -15,7 +13,7 @@ public class TransactionRepository extends DatabaseConnection {
 
     public void transferMoney(String accountNumberFrom, String accountNumberTo, BigDecimal amount, String message, String ssn) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             // kontrollerar om kontot finns hos den inloggade användaren
             String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ? AND SSN = ?";
@@ -97,7 +95,7 @@ public class TransactionRepository extends DatabaseConnection {
     // sparar gjorda transaktioner
     public void saveTransaction(Transaction updatedTransaction) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String query = "INSERT INTO transaction (message, amount, from_account, to_account, SSN) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -127,7 +125,7 @@ public class TransactionRepository extends DatabaseConnection {
     // hämtar skickade transaktioner
     public void sentTransactions(String accountNumberFrom, String fromDate, String toDate, String ssn) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ? AND SSN = ?";
             PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);
@@ -181,7 +179,7 @@ public class TransactionRepository extends DatabaseConnection {
     // hämtar mottagna transaktioner
     public void receivedTransactions(String accountNumberTo, String fromDate, String toDate) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String accountOwnershipCheckQuery = "SELECT 1 FROM account WHERE account_number = ?";
             PreparedStatement accountOwnershipCheckStatement = connection.prepareStatement(accountOwnershipCheckQuery);

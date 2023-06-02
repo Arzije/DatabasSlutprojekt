@@ -1,13 +1,12 @@
 package org.arzijeziberovska.service;
 
-import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.UserRepository;
 
 
-public class UserService extends DatabaseConnection {
-    private UserRepository userRepository;
-    private User authenticatedUser;
+public class UserService {
+    private final UserRepository userRepository;
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -17,11 +16,10 @@ public class UserService extends DatabaseConnection {
         User user = userRepository.getUserBySSN(ssn);
 
         if (user != null && verifyUserCredentials(password, user.getPassword())) {
-            authenticatedUser = user;
             System.out.println("""
                     You are now logged in!
                     """);
-            return authenticatedUser;
+            return user;
         } else {
             System.out.println("Wrong credentials! Please try again.");
         }

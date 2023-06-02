@@ -1,7 +1,5 @@
 package org.arzijeziberovska.view;
 
-
-import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Account;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.AccountRepository;
@@ -14,12 +12,12 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class AccountView extends DatabaseConnection {
-    private User authenticatedUser;
-    private AccountRepository accountRepository;
-    private TransactionRepository transactionRepository;
-    private TransactionService transactionService;
-    private AccountService accountService;
+public class AccountView {
+    private final User authenticatedUser;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
+    private final AccountService accountService;
     private Scanner scanner;
 
     public AccountView(User authenticatedUser,
@@ -75,8 +73,12 @@ public class AccountView extends DatabaseConnection {
                     System.out.println("You have been logged out!");
                     whileTrue = false;
                     break;
+                default:
+                    System.out.println("Invalid input, try again!");
+                    break;
             }
         }
+        scanner.close();
     }
 
     //visar info om användaren och konton
@@ -140,6 +142,7 @@ public class AccountView extends DatabaseConnection {
 
         Account newAccount = new Account(balance, userId, accountName, accountNumber, ssn);
         accountRepository.saveAccount(newAccount);
+        scanner.close();
     }
 
     // raderar konto baserat på kontonummer och ssn
@@ -149,11 +152,12 @@ public class AccountView extends DatabaseConnection {
         String accountNumber = scanner.nextLine();
 
         accountService.deleteAccount(accountNumber, authenticatedUser);
+        scanner.close();
     }
 
     // tar in input från användaren och skickar vidare till service för att göra en transaktion
     public void transferMoney() {
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
 
             System.out.print("Enter the account number you want to transfer from: ");
             String accountNumberFrom = scanner.nextLine().trim();
@@ -169,12 +173,13 @@ public class AccountView extends DatabaseConnection {
             String message = scanner.nextLine();
 
             transactionService.transferMoney(authenticatedUser, accountNumberFrom, accountNumberTo, amount, message);
+            scanner.close();
     }
 
 
     //tar in input från användaren och skickar vidare till repository för att visa transaktioner som skickats
     public void showSentTransactions() {
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
 
             System.out.print("Enter the account number you want to show transactions from: ");
             String accountNumberFrom = scanner.nextLine().trim();
@@ -188,12 +193,12 @@ public class AccountView extends DatabaseConnection {
             String ssn = authenticatedUser.getSSN();
 
             transactionRepository.sentTransactions(accountNumberFrom, fromDate, toDate, ssn);
-
+            scanner.close();
     }
 
     //tar in input från användaren och skickar vidare till repository för att visa transaktioner som mottagits
     public void showReceivedTransactions() {
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
 
             System.out.print("Enter the account number: ");
             String accountNumber = scanner.nextLine().trim();
@@ -205,6 +210,7 @@ public class AccountView extends DatabaseConnection {
             String toDate = scanner.nextLine().trim();
 
             transactionRepository.receivedTransactions(accountNumber, fromDate, toDate);
+            scanner.close();
     }
 }
 

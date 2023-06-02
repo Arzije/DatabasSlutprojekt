@@ -11,13 +11,12 @@ import org.arzijeziberovska.service.UserService;
 import java.util.Scanner;
 
 public class UserView {
-    private User authenticatedUser;
-    private UserService userService;
-    private AccountRepository accountRepository;
-    private TransactionService transactionService;
-    private TransactionRepository transactionRepository;
-    private AccountService accountService;
-
+    private final User authenticatedUser;
+    private final UserService userService;
+    private final AccountRepository accountRepository;
+    private final TransactionService transactionService;
+    private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
     private Scanner scanner;
 
     public UserView(User authenticatedUser, UserService userService, AccountRepository accountRepository,
@@ -25,8 +24,8 @@ public class UserView {
                     AccountService accountService) {
         this.authenticatedUser = authenticatedUser;
         if (authenticatedUser == null) {
-            throw new IllegalArgumentException("User authentication failed. Please make sure the authentication process returns a valid User object.");
-        }
+            throw new IllegalArgumentException("User authentication failed. Please make sure the authentication " +
+                    "process returns a valid User object.");        }
         this.userService = userService;
         this.accountRepository = accountRepository;
         this.transactionService = transactionService;
@@ -68,11 +67,12 @@ public class UserView {
                     break;
             }
         }
+        scanner.close();
     }
 
     //tar in input från användaren och skickar till userService för att uppdatera användarens info
     public void updateUserInfo() {
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         System.out.println("Enter a new password (leave blank to keep the existing)");
         String newPassword = scanner.nextLine();
@@ -90,6 +90,7 @@ public class UserView {
         String name = scanner.nextLine();
 
         userService.updateUserInfo(authenticatedUser, newPassword, email, phone, address, name);
+        scanner.close();
     }
 
 }

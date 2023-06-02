@@ -1,25 +1,21 @@
 package org.arzijeziberovska.service;
 
-import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.Account;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.AccountRepository;
 
 import java.util.Scanner;
 
-public class AccountService extends DatabaseConnection {
-//    private User authenticatedUser;
-    private AccountRepository accountRepository;
-    private Scanner scanner;
+public class AccountService {
+    private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {//User authenticatedUser,
-//        this.authenticatedUser = authenticatedUser;
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
     //säkerställer att det är rätt användare och en extra koll innan kontot raderas
     public void deleteAccount(String accountNumber, User authenticatedUser) {
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         String ssn = authenticatedUser.getSSN();
 
         Account account = accountRepository.getAccount(accountNumber);

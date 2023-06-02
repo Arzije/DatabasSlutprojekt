@@ -81,7 +81,7 @@ public class UserRepository extends DatabaseConnection {
     //hämtar användare från databasen baserat på SSN
     public User getUserBySSN(String ssn) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String query = "SELECT * FROM user WHERE SSN = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -135,9 +135,9 @@ public class UserRepository extends DatabaseConnection {
         }
     }
 
-    public Object getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String query = "SELECT * FROM user WHERE email = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);

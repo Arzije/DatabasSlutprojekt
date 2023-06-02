@@ -17,6 +17,9 @@ public class Main {
         configureDataSource();
 
         DatabaseHandler databaseHandler = new DatabaseHandler();
+        databaseHandler.createTableUser();
+        databaseHandler.createTableAccount();
+        databaseHandler.createTableTransaction();
 
         UserRepository userRepository = new UserRepository();
         UserService userService = new UserService(userRepository);
@@ -28,7 +31,7 @@ public class Main {
         TransactionService transactionService = new TransactionService(transactionRepository);
 
         InitialView initialView = new InitialView
-                (userService, userRepository,
+                (userService,
                 accountRepository, transactionService,
                 transactionRepository, accountService);
         initialView.firstView();

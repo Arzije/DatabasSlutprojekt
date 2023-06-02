@@ -1,13 +1,12 @@
 package org.arzijeziberovska.service;
 
-import org.arzijeziberovska.database.DatabaseConnection;
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 
-public class TransactionService extends DatabaseConnection {
-    private TransactionRepository transactionRepository;
+public class TransactionService {
+    private final TransactionRepository transactionRepository;
 
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;

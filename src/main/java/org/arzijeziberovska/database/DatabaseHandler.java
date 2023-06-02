@@ -7,9 +7,7 @@ import java.sql.SQLException;
 public class DatabaseHandler extends DatabaseConnection {
 
     public DatabaseHandler() {
-        createTableUser();
-        createTableAccount();
-        createTableTransaction();
+
     }
 
     public void createTableUser() {

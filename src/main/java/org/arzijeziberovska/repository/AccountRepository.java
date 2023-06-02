@@ -67,7 +67,7 @@ public class AccountRepository extends DatabaseConnection{
         List<String[]> accounts = new ArrayList<>();
 
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String query = "SELECT account_name, balance " +
                     "FROM account " +
@@ -96,7 +96,7 @@ public class AccountRepository extends DatabaseConnection{
 
     public Account getAccount(String accountNumber) {
         try {
-            Connection connection = getConnection();
+            Connection connection = super.getConnection();
 
             String query = "SELECT * FROM account WHERE account_number = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
