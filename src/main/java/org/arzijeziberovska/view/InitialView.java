@@ -1,24 +1,35 @@
 package org.arzijeziberovska.view;
 
-
 import org.arzijeziberovska.model.User;
 import org.arzijeziberovska.repository.UserRepository;
 import org.arzijeziberovska.service.UserService;
+import org.arzijeziberovska.service.AccountService;
+import org.arzijeziberovska.service.TransactionService;
+import org.arzijeziberovska.repository.AccountRepository;
+import org.arzijeziberovska.repository.TransactionRepository;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Scanner;
 
-public class InitialView {
-    private Scanner scanner;
-    private UserService userService;
-    private User authenticatedUser;
-    private UserRepository userRepository;
+    public class InitialView {
+        private Scanner scanner;
+        private UserService userService;
+        private User authenticatedUser;
+        private UserRepository userRepository;
+        private AccountRepository accountRepository;
+        private TransactionService transactionService;
+        private TransactionRepository transactionRepository;
+        private AccountService accountService;
 
-    public InitialView(UserService userService, UserRepository userRepository) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-;    }
+        public InitialView(UserService userService, UserRepository userRepository,
+                           AccountRepository accountRepository, TransactionService transactionService,
+                           TransactionRepository transactionRepository, AccountService accountService) {
+            this.userService = userService;
+            this.userRepository = userRepository;
+            this.accountRepository = accountRepository;
+            this.transactionService = transactionService;
+            this.transactionRepository = transactionRepository;
+            this.accountService = accountService;
+        }
 
     public void firstView() {
         boolean whileTrue = true;
@@ -42,8 +53,9 @@ public class InitialView {
 
                 case "2":
                     authenticatedUser = getAuthenticatedUser();
-                    UserService userService1 = new UserService(userRepository);
-                    UserView userView = new UserView(authenticatedUser, userService1);
+                    UserView userView = new UserView
+                            (authenticatedUser, userService, accountRepository,
+                            transactionService, transactionRepository, accountService);
                     userView.userView();
                     whileTrue = false;
                     break;

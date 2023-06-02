@@ -8,20 +8,30 @@ import org.arzijeziberovska.service.AccountService;
 import org.arzijeziberovska.service.TransactionService;
 import org.arzijeziberovska.service.UserService;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 public class UserView {
     private User authenticatedUser;
     private UserService userService;
+    private AccountRepository accountRepository;
+    private TransactionService transactionService;
+    private TransactionRepository transactionRepository;
+    private AccountService accountService;
+
     private Scanner scanner;
 
-    public UserView(User authenticatedUser, UserService userService) {
+    public UserView(User authenticatedUser, UserService userService, AccountRepository accountRepository,
+                    TransactionService transactionService, TransactionRepository transactionRepository,
+                    AccountService accountService) {
         this.authenticatedUser = authenticatedUser;
         if (authenticatedUser == null) {
             throw new IllegalArgumentException("User authentication failed. Please make sure the authentication process returns a valid User object.");
         }
         this.userService = userService;
+        this.accountRepository = accountRepository;
+        this.transactionService = transactionService;
+        this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
     }
 
     public void userView() {
@@ -39,12 +49,9 @@ public class UserView {
 
             switch (scanner.nextLine().trim()){
                 case "1":
-                    AccountRepository accountRepository = new AccountRepository();
-                    TransactionRepository transactionRepository1 = new TransactionRepository();
-                    TransactionService transactionService = new TransactionService(transactionRepository1);
-                    TransactionRepository transactionRepository = new TransactionRepository();
-                    AccountService accountService = new AccountService(authenticatedUser, accountRepository);
-                    AccountView accountView = new AccountView(authenticatedUser, accountRepository, transactionService, transactionRepository, accountService);
+                    AccountView accountView = new AccountView
+                            (authenticatedUser, accountRepository, transactionService,
+                            transactionRepository, accountService);
                     accountView.showAccountView();
                     whileTrue = false;
                     break;
@@ -86,8 +93,3 @@ public class UserView {
     }
 
 }
-
-
-
-
-

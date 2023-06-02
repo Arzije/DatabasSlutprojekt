@@ -144,11 +144,10 @@ public class AccountView extends DatabaseConnection {
 
     // raderar konto baserat på kontonummer och ssn
     public void deleteAccount() {
-        Scanner scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
         System.out.println("Enter account number: ");
         String accountNumber = scanner.nextLine();
 
-        String ssn = authenticatedUser.getSSN();
         accountService.deleteAccount(accountNumber, authenticatedUser);
     }
 
