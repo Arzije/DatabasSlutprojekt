@@ -2,7 +2,6 @@ package org.arzijeziberovska.model;
 
 import org.arzijeziberovska.database.DatabaseConnection;
 
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -43,11 +42,11 @@ public class Transaction extends DatabaseConnection {
 
     public Timestamp getCreated() {
         return created;
-    } //ta bort ??
+    }
 
     public void setCreated(Timestamp created) {
         this.created = created;
-    } //ta bort ??
+    }
 
     public BigDecimal getAmount() {
         return amount;
@@ -76,6 +75,7 @@ public class Transaction extends DatabaseConnection {
     public String getSSN() {
         return SSN;
     }
+
     public void setSSN(String SSN) {
         this.SSN = SSN;
     }

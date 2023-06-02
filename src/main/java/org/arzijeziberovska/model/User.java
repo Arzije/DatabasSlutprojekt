@@ -3,7 +3,6 @@ package org.arzijeziberovska.model;
 import org.arzijeziberovska.database.DatabaseConnection;
 
 public class User extends DatabaseConnection {
-
     private int id;
     private String password;
     private String email;
