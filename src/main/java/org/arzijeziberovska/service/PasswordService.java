@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 public class PasswordService {
     private static final int SALT_LENGTH = 16;
 
-    public static String Hash(String password){
+    public String hash(String password){
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_LENGTH];
         random.nextBytes(salt);
@@ -24,7 +24,7 @@ public class PasswordService {
         }
     }
 
-    public static boolean Verify(String password, String hashedPassword) {
+    public boolean verify(String password, String hashedPassword) {
         String passwordHash = hashedPassword.substring(0, 64);
         String saltHex = hashedPassword.substring(64);
 
@@ -44,7 +44,7 @@ public class PasswordService {
         }
     }
 
-    private static String byteArrayToHexString(byte[] array) {
+    private String byteArrayToHexString(byte[] array) {
         StringBuilder sb = new StringBuilder();
         for (byte b : array) {
             sb.append(String.format("%02x", b));
@@ -52,7 +52,7 @@ public class PasswordService {
         return sb.toString();
     }
 
-    private static byte[] hexStringToByteArray(String s) {
+    private byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {

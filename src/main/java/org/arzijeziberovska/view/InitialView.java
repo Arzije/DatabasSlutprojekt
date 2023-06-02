@@ -29,15 +29,14 @@ import java.util.Scanner;
 
     public void firstView() {
         boolean whileTrue = true;
+        scanner = new Scanner(System.in);
 
         while (whileTrue) {
-            scanner = new Scanner(System.in);
-
             System.out.println("""
                     Welcome to Swosh!
                     
                     Choose from the menu below:
-                    1. Create user account.
+                    1. Create an account.
                     2. Login to an existing account.
                     3. Quit.
                     """);
@@ -46,7 +45,6 @@ import java.util.Scanner;
                 case "1":
                     createUser();
                     break;
-
                 case "2":
                     User authenticatedUser = getAuthenticatedUser();
                     UserView userView = new UserView
@@ -55,15 +53,14 @@ import java.util.Scanner;
                     userView.userView();
                     whileTrue = false;
                     break;
-
                 case "3":
                     whileTrue = false;
-
+                    break;
                 default:
+                    System.out.println("Invalid input. Please try again.");
                     break;
             }
         }
-        scanner.close();
     }
 
     //tar in input från användaren och skapar en ny användare
@@ -82,7 +79,6 @@ import java.util.Scanner;
         String password = scanner.nextLine();
 
         userService.createUser(name, SSN, email, address, phone, password);
-        scanner.close();
     }
 
     //tar in input från användaren och autentiserar användaren
@@ -104,7 +100,6 @@ import java.util.Scanner;
             if (authenticatedUser != null) {
                 authenticated = true;
             }
-            scanner.close();
         }
         return authenticatedUser;
     }

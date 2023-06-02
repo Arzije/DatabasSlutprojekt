@@ -32,11 +32,10 @@ public class AccountView {
         this.accountService = accountService;
     }
     public void showAccountView() {
-
         boolean whileTrue = true;
+        scanner = new Scanner(System.in);
 
         while (whileTrue){
-            scanner = new Scanner(System.in);
             System.out.println("""
                     Welcome to your account!
                     
@@ -74,11 +73,10 @@ public class AccountView {
                     whileTrue = false;
                     break;
                 default:
-                    System.out.println("Invalid input, try again!");
+                    System.out.println("Invalid input!");
                     break;
             }
         }
-        scanner.close();
     }
 
     //visar info om användaren och konton
@@ -135,6 +133,13 @@ public class AccountView {
         System.out.println("Enter account number: ");
         String accountNumber = scanner.nextLine();
 
+        if (accountService.accountExists(accountNumber)) {
+            System.out.println("Account with account number " + accountNumber + " already exists.");
+            System.out.println("Please try again!");
+            System.out.println("");
+            return;
+        }
+
         System.out.println("""
                 
                 Account created!
@@ -142,7 +147,6 @@ public class AccountView {
 
         Account newAccount = new Account(balance, userId, accountName, accountNumber, ssn);
         accountRepository.saveAccount(newAccount);
-        scanner.close();
     }
 
     // raderar konto baserat på kontonummer och ssn
@@ -152,7 +156,6 @@ public class AccountView {
         String accountNumber = scanner.nextLine();
 
         accountService.deleteAccount(accountNumber, authenticatedUser);
-        scanner.close();
     }
 
     // tar in input från användaren och skickar vidare till service för att göra en transaktion
@@ -173,7 +176,6 @@ public class AccountView {
             String message = scanner.nextLine();
 
             transactionService.transferMoney(authenticatedUser, accountNumberFrom, accountNumberTo, amount, message);
-            scanner.close();
     }
 
 
@@ -193,7 +195,6 @@ public class AccountView {
             String ssn = authenticatedUser.getSSN();
 
             transactionRepository.sentTransactions(accountNumberFrom, fromDate, toDate, ssn);
-            scanner.close();
     }
 
     //tar in input från användaren och skickar vidare till repository för att visa transaktioner som mottagits
@@ -210,7 +211,6 @@ public class AccountView {
             String toDate = scanner.nextLine().trim();
 
             transactionRepository.receivedTransactions(accountNumber, fromDate, toDate);
-            scanner.close();
     }
 }
 

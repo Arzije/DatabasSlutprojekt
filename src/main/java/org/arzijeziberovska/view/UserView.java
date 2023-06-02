@@ -35,9 +35,9 @@ public class UserView {
 
     public void userView() {
         boolean whileTrue = true;
+        scanner = new Scanner(System.in);
 
         while (whileTrue){
-            scanner = new Scanner(System.in);
             System.out.println("""
                 Choose from the menu below:
                     1. Accounts
@@ -65,9 +65,11 @@ public class UserView {
                     System.out.println("You have been logged out!");
                     whileTrue = false;
                     break;
+                default:
+                    System.out.println("Invalid input. Please try again.");
+                    break;
             }
         }
-        scanner.close();
     }
 
     //tar in input från användaren och skickar till userService för att uppdatera användarens info
@@ -90,7 +92,6 @@ public class UserView {
         String name = scanner.nextLine();
 
         userService.updateUserInfo(authenticatedUser, newPassword, email, phone, address, name);
-        scanner.close();
     }
 
 }

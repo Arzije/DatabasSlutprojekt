@@ -13,6 +13,11 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    //kontrollerar om kontot redan existerar
+    public boolean accountExists(String accountNumber) {
+        return accountRepository.getAccount(accountNumber) != null;
+    }
+
     //säkerställer att det är rätt användare och en extra koll innan kontot raderas
     public void deleteAccount(String accountNumber, User authenticatedUser) {
         Scanner scanner = new Scanner(System.in);

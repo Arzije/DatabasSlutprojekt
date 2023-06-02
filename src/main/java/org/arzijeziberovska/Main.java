@@ -5,6 +5,7 @@ import org.arzijeziberovska.repository.AccountRepository;
 import org.arzijeziberovska.repository.TransactionRepository;
 import org.arzijeziberovska.repository.UserRepository;
 import org.arzijeziberovska.service.AccountService;
+import org.arzijeziberovska.service.PasswordService;
 import org.arzijeziberovska.service.TransactionService;
 import org.arzijeziberovska.service.UserService;
 import org.arzijeziberovska.view.InitialView;
@@ -22,7 +23,8 @@ public class Main {
         databaseHandler.createTableTransaction();
 
         UserRepository userRepository = new UserRepository();
-        UserService userService = new UserService(userRepository);
+        PasswordService passwordService = new PasswordService();
+        UserService userService = new UserService(userRepository, passwordService);
 
         AccountRepository accountRepository = new AccountRepository();
         AccountService accountService = new AccountService(accountRepository);
