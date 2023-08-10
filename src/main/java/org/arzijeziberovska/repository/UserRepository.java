@@ -113,25 +113,29 @@ public class UserRepository extends DatabaseConnection {
         try {
             Connection connection = super.getConnection();
 
-            String deleteAccountQuery = "DELETE FROM account WHERE SSN = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteAccountQuery);
+            String query = "DELETE u, a FROM user u " +
+                    "INNER JOIN account a ON u.SSN = a.SSN " +
+                    "WHERE u.SSN = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, authenticatedUser.getSSN());
 
-            String deleteUserQuery = "DELETE FROM user WHERE SSN = ?";
-            PreparedStatement preparedStatement1 = connection.prepareStatement(deleteUserQuery);
-            preparedStatement1.setString(1, authenticatedUser.getSSN());
-
-            preparedStatement.executeUpdate();
-            preparedStatement1.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
 
             preparedStatement.close();
             connection.close();
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            System.out.println("""
+
+            if (affectedRows > 0) {
+                System.out.println("""
                     Deletion completed
                     """);
+            } else {
+                System.out.println("""
+                    Deletion failed
+                    """);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
